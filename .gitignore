@@ -44,5 +44,3 @@ Thumbs.db
 # Environment local secrets
 .env
 *.env
-
-.agents
