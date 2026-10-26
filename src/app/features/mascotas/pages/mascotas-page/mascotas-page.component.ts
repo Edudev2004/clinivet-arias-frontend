@@ -6,6 +6,7 @@ import { Mascota } from '../../models/mascota.model';
 import { PetCardComponent } from '../../components/pet-card/pet-card.component';
 import { PetFormComponent } from '../../components/pet-form/pet-form.component';
 import { PetDetailModalComponent } from '../../components/pet-detail-modal/pet-detail-modal.component';
+import { HistorialClinicoModalComponent } from '../../components/historial-clinico-modal/historial-clinico-modal.component';
 import { ConfirmModalComponent } from '../../../../shared/components/confirm-modal/confirm-modal.component';
 
 @Component({
@@ -17,6 +18,7 @@ import { ConfirmModalComponent } from '../../../../shared/components/confirm-mod
     PetCardComponent,
     PetFormComponent,
     PetDetailModalComponent,
+    HistorialClinicoModalComponent,
     ConfirmModalComponent
   ],
   template: `
@@ -155,7 +157,7 @@ import { ConfirmModalComponent } from '../../../../shared/components/confirm-mod
                   <app-pet-card
                     [mascota]="m"
                     (verFicha)="abrirDetalle(m)"
-                    (verHistorial)="abrirDetalle(m)"
+                    (verHistorial)="abrirHistorial(m)"
                   ></app-pet-card>
                 }
               </div>
@@ -191,7 +193,7 @@ import { ConfirmModalComponent } from '../../../../shared/components/confirm-mod
               <app-pet-card
                 [mascota]="m"
                 (verFicha)="abrirDetalle(m)"
-                (verHistorial)="abrirDetalle(m)"
+                (verHistorial)="abrirHistorial(m)"
               ></app-pet-card>
             }
           </div>
@@ -204,8 +206,19 @@ import { ConfirmModalComponent } from '../../../../shared/components/confirm-mod
           [mascota]="mascotaSeleccionada()!"
           (cerrar)="mascotaSeleccionada.set(null)"
           (editar)="iniciarEdicionDesdeModal($event)"
-          (verHistorial)="mascotaSeleccionada.set(null)"
+          (verHistorial)="abrirHistorial($event)"
         ></app-pet-detail-modal>
+      }
+
+      <!-- MODAL DE HISTORIAL CLÍNICO (Estilo VetHD) -->
+      @if (mascotaParaHistorial()) {
+        <app-historial-clinico-modal
+          [isOpen]="!!mascotaParaHistorial()"
+          [mascotaId]="mascotaParaHistorial()!.id"
+          [mascotaNombre]="mascotaParaHistorial()!.nombre"
+          [mascota]="mascotaParaHistorial()!"
+          (close)="mascotaParaHistorial.set(null)"
+        ></app-historial-clinico-modal>
       }
 
       <!-- MODAL DE CONFIRMACIÓN PARA BORRADO LÓGICO (RF-12 / RN-07) -->
@@ -228,6 +241,7 @@ export class MascotasPageComponent implements OnInit {
   readonly showForm = signal<boolean>(false);
   readonly mascotaEnEdicion = signal<Mascota | null>(null);
   readonly mascotaSeleccionada = signal<Mascota | null>(null);
+  readonly mascotaParaHistorial = signal<Mascota | null>(null);
   readonly mascotaParaEliminar = signal<Mascota | null>(null);
   readonly mostrarModalEliminar = signal<boolean>(false);
   readonly mensajeExito = signal<string | null>(null);
@@ -285,6 +299,11 @@ export class MascotasPageComponent implements OnInit {
 
   abrirDetalle(m: Mascota): void {
     this.mascotaSeleccionada.set(m);
+  }
+
+  abrirHistorial(m: Mascota): void {
+    this.mascotaSeleccionada.set(null);
+    this.mascotaParaHistorial.set(m);
   }
 
   iniciarEdicionDesdeModal(m: Mascota): void {

@@ -3,20 +3,28 @@ import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { HeaderComponent } from '../header/header.component';
+import { BottomNavComponent } from '../bottom-nav/bottom-nav.component';
 import { ConfirmModalComponent } from '../../../shared/components/confirm-modal/confirm-modal.component';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-main-layout',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, SidebarComponent, HeaderComponent, ConfirmModalComponent],
+  imports: [
+    CommonModule,
+    RouterOutlet,
+    SidebarComponent,
+    HeaderComponent,
+    BottomNavComponent,
+    ConfirmModalComponent
+  ],
   template: `
     <div class="min-h-screen bg-[#f8fafc] text-slate-800 flex flex-col md:flex-row">
       <!-- Barra lateral de navegación (Desktop hover expansible) -->
       <app-sidebar (solicitarLogout)="mostrarModalLogout = true"></app-sidebar>
 
       <!-- Área de contenido principal -->
-      <div class="flex-1 flex flex-col pl-0 md:pl-20 transition-all duration-300 min-w-0 pb-16 md:pb-8">
+      <div class="flex-1 flex flex-col pl-0 md:pl-20 transition-all duration-300 min-w-0 pb-20 md:pb-8">
         <app-header
           [userName]="userName"
           [userFullName]="userFullName"
@@ -28,6 +36,9 @@ import { AuthService } from '../../../core/services/auth.service';
           <router-outlet></router-outlet>
         </main>
       </div>
+
+      <!-- Menú inferior flotante (Solo Móvil - Estilo VetHD) -->
+      <app-bottom-nav></app-bottom-nav>
 
       <!-- Modal de confirmación para cerrar sesión (RN-07 / APF2) -->
       <app-confirm-modal
