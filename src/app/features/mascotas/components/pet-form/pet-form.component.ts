@@ -357,6 +357,7 @@ export class PetFormComponent implements OnInit {
       dni: 'Pendiente',
       telefono: 'Sin teléfono'
     };
+    this.mascotaService.agregarPropietarioLocal(nuevo);
     this.seleccionarPropietario(nuevo);
   }
 

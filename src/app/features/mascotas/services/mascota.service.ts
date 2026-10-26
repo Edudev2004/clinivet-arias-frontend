@@ -30,7 +30,7 @@ export class MascotaService {
   readonly error = signal<string | null>(null);
 
   // Propietarios precargados de referencia según seed_data.sql (APF2)
-  private readonly propietariosMock: PropietarioResumen[] = [
+  private propietariosMock: PropietarioResumen[] = [
     {
       id: 'p0000000-0000-0000-0000-000000000001',
       nombre: 'Carlos',
@@ -115,8 +115,56 @@ export class MascotaService {
     }
   ];
 
+  private readonly STORAGE_KEY = 'clinivet_mascotas_db';
+  private readonly PROPIETARIOS_KEY = 'clinivet_propietarios_db';
+
   constructor() {
+    this.cargarDeStorage();
+    this.cargarPropietarios();
     this.mascotas.set([...this.mascotasLocales]);
+  }
+
+  private guardarEnStorage(): void {
+    try {
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.mascotasLocales));
+    } catch {}
+  }
+
+  private cargarDeStorage(): void {
+    try {
+      const guardadas = localStorage.getItem(this.STORAGE_KEY);
+      if (guardadas) {
+        const parsed = JSON.parse(guardadas);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          this.mascotasLocales = parsed;
+        }
+      }
+    } catch {}
+  }
+
+  private guardarPropietarios(): void {
+    try {
+      localStorage.setItem(this.PROPIETARIOS_KEY, JSON.stringify(this.propietariosMock));
+    } catch {}
+  }
+
+  private cargarPropietarios(): void {
+    try {
+      const guardados = localStorage.getItem(this.PROPIETARIOS_KEY);
+      if (guardados) {
+        const parsed = JSON.parse(guardados);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          this.propietariosMock = parsed;
+        }
+      }
+    } catch {}
+  }
+
+  agregarPropietarioLocal(prop: PropietarioResumen): void {
+    if (!this.propietariosMock.some((p) => p.id === prop.id)) {
+      this.propietariosMock.unshift(prop);
+      this.guardarPropietarios();
+    }
   }
 
   /**
@@ -129,6 +177,7 @@ export class MascotaService {
     return this.http.get<Mascota[]>(this.apiUrl).pipe(
       tap((res) => {
         this.mascotasLocales = res;
+        this.guardarEnStorage();
         this.mascotas.set(res);
         this.cargando.set(false);
       }),
@@ -165,16 +214,17 @@ export class MascotaService {
     return this.http.post<Mascota>(this.apiUrl, payload).pipe(
       tap((nueva) => {
         this.mascotasLocales.unshift(nueva);
+        this.guardarEnStorage();
         this.mascotas.set([...this.mascotasLocales]);
         this.cargando.set(false);
       }),
       catchError(() => {
-        // Simulación local reactiva en frontend
+        // Simulación local reactiva en frontend con persistencia
         const prop = this.propietariosMock.find((p) => p.id === payload.propietarioId);
         const nuevaMascota: Mascota = {
           id: `m-${Date.now()}`,
           propietarioId: payload.propietarioId,
-          propietarioNombre: prop ? `${prop.nombre} ${prop.apellido}` : 'Propietario Asignado',
+          propietarioNombre: prop ? `${prop.nombre} ${prop.apellido}`.trim() : 'Propietario Asignado',
           propietarioDni: prop ? prop.dni : '',
           propietarioTelefono: prop ? prop.telefono : '',
           nombre: payload.nombre,
@@ -190,6 +240,7 @@ export class MascotaService {
         };
 
         this.mascotasLocales.unshift(nuevaMascota);
+        this.guardarEnStorage();
         this.mascotas.set([...this.mascotasLocales]);
         this.cargando.set(false);
         return of(nuevaMascota);
@@ -208,6 +259,7 @@ export class MascotaService {
         const index = this.mascotasLocales.findIndex((m) => m.id === id);
         if (index !== -1) {
           this.mascotasLocales[index] = actualizada;
+          this.guardarEnStorage();
           this.mascotas.set([...this.mascotasLocales]);
         }
         this.cargando.set(false);
@@ -223,13 +275,14 @@ export class MascotaService {
             ...this.mascotasLocales[index],
             ...payload,
             propietarioNombre: prop
-              ? `${prop.nombre} ${prop.apellido}`
+              ? `${prop.nombre} ${prop.apellido}`.trim()
               : this.mascotasLocales[index].propietarioNombre,
             propietarioDni: prop ? prop.dni : this.mascotasLocales[index].propietarioDni,
             updatedAt: new Date().toISOString()
           };
 
           this.mascotasLocales[index] = mascotaActualizada;
+          this.guardarEnStorage();
           this.mascotas.set([...this.mascotasLocales]);
           this.cargando.set(false);
           return of(mascotaActualizada);
@@ -247,10 +300,12 @@ export class MascotaService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`).pipe(
       tap(() => {
         this.mascotasLocales = this.mascotasLocales.filter((m) => m.id !== id);
+        this.guardarEnStorage();
         this.mascotas.set([...this.mascotasLocales]);
       }),
       catchError(() => {
         this.mascotasLocales = this.mascotasLocales.filter((m) => m.id !== id);
+        this.guardarEnStorage();
         this.mascotas.set([...this.mascotasLocales]);
         return of(void 0);
       })
