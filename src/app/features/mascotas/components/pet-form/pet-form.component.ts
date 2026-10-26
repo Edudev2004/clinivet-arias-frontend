@@ -53,31 +53,52 @@ import { ImageUploadComponent } from '../../../../shared/components/image-upload
             </button>
           </div>
         } @else {
-          <!-- Input con Autocomplete -->
+          <!-- Input con Autocomplete y Creador Rápido de Propietario -->
           <div class="relative">
             <input
               type="text"
               [value]="busquedaPropietario"
+              (focus)="onFocusPropietario()"
+              (blur)="onBlurPropietario()"
               (input)="onBuscarPropietario($event)"
-              placeholder="Buscar por DNI, nombre o apellido..."
+              placeholder="Buscar por DNI/nombre o escribir nuevo propietario..."
               class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:bg-white transition-all shadow-xs"
             />
             
-            <!-- Lista desplegable de sugerencias -->
-            @if (propietariosSugeridos.length > 0) {
-              <div class="absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-2xl shadow-xl z-20 max-h-48 overflow-y-auto divide-y divide-slate-100">
+            <!-- Lista desplegable de sugerencias y opción de creación rápida -->
+            @if (mostrarSugerencias && (propietariosSugeridos.length > 0 || busquedaPropietario.trim().length > 0)) {
+              <div class="absolute left-0 right-0 top-full mt-1 bg-white border border-slate-200 rounded-2xl shadow-xl z-20 max-h-56 overflow-y-auto divide-y divide-slate-100">
                 @for (prop of propietariosSugeridos; track prop.id) {
                   <button
                     type="button"
-                    (click)="seleccionarPropietario(prop)"
-                    class="w-full text-left p-3 hover:bg-blue-50 flex items-center justify-between transition-colors"
+                    (mousedown)="seleccionarPropietario(prop)"
+                    class="w-full text-left p-3 hover:bg-blue-50 flex items-center justify-between transition-colors cursor-pointer"
                   >
                     <div>
                       <p class="text-xs font-bold text-slate-900">{{ prop.nombre }} {{ prop.apellido }}</p>
-                      <p class="text-[11px] text-slate-500">DNI: {{ prop.dni }}</p>
+                      <p class="text-[11px] text-slate-500">DNI: {{ prop.dni }} · Tel: {{ prop.telefono }}</p>
                     </div>
                     <span class="text-[11px] font-semibold text-brand-700 bg-blue-100 px-2 py-0.5 rounded-full">
                       Seleccionar
+                    </span>
+                  </button>
+                }
+
+                @if (busquedaPropietario.trim().length > 0) {
+                  <button
+                    type="button"
+                    (mousedown)="crearPropietarioRapido(busquedaPropietario)"
+                    class="w-full text-left p-3 hover:bg-emerald-50 flex items-center justify-between transition-colors text-emerald-800 bg-emerald-50/60 cursor-pointer"
+                  >
+                    <div class="flex items-center gap-2">
+                      <span class="w-6 h-6 rounded-full bg-emerald-200 text-emerald-800 flex items-center justify-center font-bold text-xs flex-shrink-0">+</span>
+                      <div>
+                        <p class="text-xs font-bold text-emerald-900">Usar "{{ busquedaPropietario.trim() }}" como propietario</p>
+                        <p class="text-[11px] text-emerald-700">Vincular directamente como nuevo responsable</p>
+                      </div>
+                    </div>
+                    <span class="text-[11px] font-bold text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded-full">
+                      Vincular
                     </span>
                   </button>
                 }
@@ -194,7 +215,7 @@ import { ImageUploadComponent } from '../../../../shared/components/image-upload
 
         <div class="space-y-1">
           <label for="fechaNacimiento" class="block text-xs font-bold uppercase tracking-wider text-slate-700">
-            Fecha de Nacimiento
+            Fecha de Nacimiento <span class="text-slate-400 font-normal lowercase text-[11px]">(opcional)</span>
           </label>
           <input
             id="fechaNacimiento"
@@ -225,7 +246,7 @@ import { ImageUploadComponent } from '../../../../shared/components/image-upload
         </button>
         <button
           type="submit"
-          [disabled]="petForm.invalid || isSubmitting"
+          [disabled]="isSubmitting"
           class="relative overflow-hidden px-7 py-3 text-sm font-extrabold text-white bg-[#1e6ff9] border-2 border-[#1e6ff9] hover:bg-[#1858c7] hover:border-[#1858c7] hover:shadow-[0_4px_14px_rgba(30,111,249,0.35)] shadow-[0_3px_0_1px_rgba(30,111,249,0.3)] disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 rounded-xl transition-all duration-300 flex items-center gap-2 active:scale-95 cursor-pointer group"
         >
           <!-- Animated Skew Light Bar (#F59E0B / Amber shine effect - 1s duration) -->
@@ -306,9 +327,43 @@ export class PetFormComponent implements OnInit {
     }
   }
 
+  mostrarSugerencias = false;
+
+  onFocusPropietario(): void {
+    this.mostrarSugerencias = true;
+    this.mascotaService.buscarPropietarios(this.busquedaPropietario).subscribe({
+      next: (res) => {
+        this.propietariosSugeridos = res;
+      }
+    });
+  }
+
+  onBlurPropietario(): void {
+    setTimeout(() => {
+      this.mostrarSugerencias = false;
+      if (!this.propietarioSeleccionado && this.busquedaPropietario.trim().length > 0) {
+        this.crearPropietarioRapido(this.busquedaPropietario);
+      }
+    }, 250);
+  }
+
+  crearPropietarioRapido(nombre: string): void {
+    const limpio = nombre.trim();
+    if (!limpio) return;
+    const nuevo: PropietarioResumen = {
+      id: 'p-' + Math.random().toString(36).substring(2, 10),
+      nombre: limpio,
+      apellido: '',
+      dni: 'Pendiente',
+      telefono: 'Sin teléfono'
+    };
+    this.seleccionarPropietario(nuevo);
+  }
+
   onBuscarPropietario(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.busquedaPropietario = input.value;
+    this.mostrarSugerencias = true;
 
     this.mascotaService.buscarPropietarios(this.busquedaPropietario).subscribe({
       next: (res) => {
@@ -322,16 +377,25 @@ export class PetFormComponent implements OnInit {
     this.petForm.patchValue({ propietarioId: prop.id });
     this.propietariosSugeridos = [];
     this.busquedaPropietario = '';
+    this.mostrarSugerencias = false;
   }
 
   deseleccionarPropietario(): void {
     this.propietarioSeleccionado = null;
     this.petForm.patchValue({ propietarioId: '' });
+    this.mostrarSugerencias = true;
+    this.onFocusPropietario();
   }
 
   onSubmit(): void {
+    // Si el usuario ingresó un nombre de propietario pero no hizo clic en la sugerencia, vincularlo automáticamente
+    if (!this.petForm.get('propietarioId')?.value && this.busquedaPropietario.trim().length > 0) {
+      this.crearPropietarioRapido(this.busquedaPropietario);
+    }
+
     if (this.petForm.invalid) {
       this.petForm.markAllAsTouched();
+      this.errorMessage = 'Por favor completa todos los campos obligatorios marcados con (*).';
       return;
     }
 
@@ -343,7 +407,8 @@ export class PetFormComponent implements OnInit {
       // Actualizar (RF-11 / RF-12)
       const updatePayload: MascotaUpdateRequest = {
         ...formValue,
-        pesoActualKg: formValue.pesoActualKg ? Number(formValue.pesoActualKg) : undefined
+        pesoActualKg: formValue.pesoActualKg ? Number(formValue.pesoActualKg) : undefined,
+        fechaNacimiento: formValue.fechaNacimiento?.trim() ? formValue.fechaNacimiento : undefined
       };
 
       this.mascotaService.actualizarMascota(this.mascota.id, updatePayload).subscribe({
@@ -360,7 +425,8 @@ export class PetFormComponent implements OnInit {
       // Registrar nueva mascota (RF-09)
       const createPayload: MascotaCreateRequest = {
         ...formValue,
-        pesoActualKg: formValue.pesoActualKg ? Number(formValue.pesoActualKg) : undefined
+        pesoActualKg: formValue.pesoActualKg ? Number(formValue.pesoActualKg) : undefined,
+        fechaNacimiento: formValue.fechaNacimiento?.trim() ? formValue.fechaNacimiento : undefined
       };
 
       this.mascotaService.registrarMascota(createPayload).subscribe({
