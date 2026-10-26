@@ -38,6 +38,9 @@ export class LoginComponent {
     const { email, password } = this.loginForm.value;
 
     this.authService.login({ email: email!, password_hash: password! }).subscribe({
+      next: () => {
+        this.isLoading.set(false);
+      },
       error: (err) => {
         this.isLoading.set(false);
         if (err.status === 401) {
