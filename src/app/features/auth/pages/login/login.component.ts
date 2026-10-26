@@ -26,6 +26,14 @@ export class LoginComponent {
     this.showPassword.update((val) => !val);
   }
 
+  handleQuickFill(roleEmail: string): void {
+    this.loginForm.patchValue({
+      email: roleEmail,
+      password: 'Admin123!'
+    });
+    this.errorMessage.set(null);
+  }
+
   onSubmit(): void {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();

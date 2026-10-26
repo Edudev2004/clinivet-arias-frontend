@@ -1,43 +1,111 @@
 <!-- Contenedor principal con la imagen -->
-<div class="min-h-screen flex items-center justify-center bg-[url('/assets/img/fondo-login.jpg')] bg-cover bg-center bg-no-repeat px-4 relative">
+<div class="min-h-screen flex items-center justify-center bg-[url('/assets/img/fondo-login.jpg')] bg-cover bg-center bg-no-repeat px-4 relative font-sans">
   
   <!-- Capa superpuesta que oscurece (60%) y difumina (blur) el fondo -->
   <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"></div>
 
   <!-- Contenedor del formulario (z-10 para que quede por encima del fondo difuminado) -->
-  <div class="max-w-md w-full bg-white rounded-xl shadow-lg p-8 space-y-6 relative z-10">
+  <div class="max-w-md w-full bg-white rounded-2xl shadow-2xl p-7 sm:p-8 space-y-6 relative z-10 border border-slate-100 animate-in fade-in zoom-in-95 duration-200">
     
-    <div class="text-center space-y-2">
-      <h1 class="text-2xl font-bold text-slate-800">Clinivet Arias</h1>
-      <p class="text-sm text-slate-500">Ingresa tus credenciales para acceder al sistema</p>
+    <div class="text-center space-y-1.5">
+      <!-- Icono Estetoscopio Clinivet Arias -->
+      <div class="w-12 h-12 rounded-2xl bg-teal-600 text-white flex items-center justify-center mx-auto mb-2 shadow-md shadow-teal-700/20">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 4.5v3a7.5 7.5 0 0015 0v-3m-15 0h3m12 0h-3m-7.5 7.5v3.75a3.75 3.75 0 007.5 0v-1.5m0 0a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0z"/>
+        </svg>
+      </div>
+      <h1 class="text-2xl font-black text-slate-900 font-outfit tracking-tight">Clinivet Arias</h1>
+      <p class="text-xs sm:text-sm text-slate-500 font-medium">Ingresa tus credenciales para acceder al sistema</p>
+    </div>
+
+    <!-- ⚡ Accesos de prueba rápida (1-click) estilo VetHD -->
+    <div class="p-3.5 rounded-2xl bg-slate-50/90 border border-slate-200/80 space-y-2">
+      <div class="flex items-center justify-between">
+        <span class="text-[11px] font-bold uppercase tracking-wider text-slate-500">
+          ⚡ Accesos Rápidos (1-Click)
+        </span>
+        <span class="text-[10px] font-semibold text-teal-700 bg-teal-100/70 px-2 py-0.5 rounded-full">
+          Demo
+        </span>
+      </div>
+
+      <div class="grid grid-cols-3 gap-2">
+        <!-- Botón Admin -->
+        <button
+          type="button"
+          (click)="handleQuickFill('admin@clinivet.pe')"
+          class="p-2 rounded-xl bg-white hover:bg-amber-50 border border-slate-200 hover:border-amber-300 text-left transition-all shadow-2xs group focus:outline-none"
+          title="Autocompletar como Administrador"
+        >
+          <div class="flex items-center gap-1.5 text-amber-700 text-xs font-bold">
+            <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/>
+            </svg>
+            <span class="truncate">Admin</span>
+          </div>
+          <p class="text-[10px] text-slate-400 mt-0.5 truncate">Rommel</p>
+        </button>
+
+        <!-- Botón Veterinario -->
+        <button
+          type="button"
+          (click)="handleQuickFill('veterinario@clinivet.pe')"
+          class="p-2 rounded-xl bg-white hover:bg-teal-50 border border-slate-200 hover:border-teal-300 text-left transition-all shadow-2xs group focus:outline-none"
+          title="Autocompletar como Médico Veterinario"
+        >
+          <div class="flex items-center gap-1.5 text-teal-700 text-xs font-bold">
+            <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 4.5v3a7.5 7.5 0 0015 0v-3m-15 0h3m12 0h-3m-7.5 7.5v3.75a3.75 3.75 0 007.5 0v-1.5m0 0a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0z"/>
+            </svg>
+            <span class="truncate">Veterinario</span>
+          </div>
+          <p class="text-[10px] text-slate-400 mt-0.5 truncate">Beckhan</p>
+        </button>
+
+        <!-- Botón Recepcionista -->
+        <button
+          type="button"
+          (click)="handleQuickFill('recepcion@clinivet.pe')"
+          class="p-2 rounded-xl bg-white hover:bg-sky-50 border border-slate-200 hover:border-sky-300 text-left transition-all shadow-2xs group focus:outline-none"
+          title="Autocompletar como Recepcionista"
+        >
+          <div class="flex items-center gap-1.5 text-sky-700 text-xs font-bold">
+            <svg class="w-3.5 h-3.5 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/>
+            </svg>
+            <span class="truncate">Recepción</span>
+          </div>
+          <p class="text-[10px] text-slate-400 mt-0.5 truncate">Lucero</p>
+        </button>
+      </div>
     </div>
 
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-4">
       <!-- Correo -->
       <div>
-        <label class="block text-sm font-medium text-slate-700 mb-1">Correo electrónico</label>
+        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Correo electrónico</label>
         <input 
           type="email" 
           formControlName="email"
           placeholder="admin@clinivet.pe"
-          class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-sky-500 outline-none transition text-slate-800"
-          [ngClass]="{'border-rose-500': loginForm.get('email')?.touched && loginForm.get('email')?.invalid}"
+          class="w-full px-3.5 py-2.5 bg-slate-50 border rounded-xl focus:bg-white focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition text-xs sm:text-sm text-slate-800 shadow-xs"
+          [ngClass]="{'border-rose-500': loginForm.get('email')?.touched && loginForm.get('email')?.invalid, 'border-slate-200': !loginForm.get('email')?.touched || loginForm.get('email')?.valid}"
         />
-        <span *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.errors?.['required']" class="text-xs text-rose-500 mt-1 block">
+        <span *ngIf="loginForm.get('email')?.touched && loginForm.get('email')?.errors?.['required']" class="text-[11px] text-rose-500 mt-1 block">
           El correo es obligatorio.
         </span>
       </div>
 
       <!-- Contraseña -->
       <div>
-        <label class="block text-sm font-medium text-slate-700 mb-1">Contraseña</label>
+        <label class="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1">Contraseña</label>
         <div class="relative">
           <input 
             [type]="showPassword() ? 'text' : 'password'" 
             formControlName="password"
             placeholder="••••••••"
-            class="w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-sky-500 outline-none transition text-slate-800 pr-10"
-            [ngClass]="{'border-rose-500': loginForm.get('password')?.touched && loginForm.get('password')?.invalid}"
+            class="w-full px-3.5 py-2.5 bg-slate-50 border rounded-xl focus:bg-white focus:ring-2 focus:ring-teal-500 focus:border-teal-500 outline-none transition text-xs sm:text-sm text-slate-800 pr-10 shadow-xs"
+            [ngClass]="{'border-rose-500': loginForm.get('password')?.touched && loginForm.get('password')?.invalid, 'border-slate-200': !loginForm.get('password')?.touched || loginForm.get('password')?.valid}"
           />
           <button 
             type="button" 
@@ -56,8 +124,8 @@
       </div>
 
       <!-- Error -->
-      <div *ngIf="errorMessage()" class="p-3 bg-rose-50 border border-rose-200 text-rose-700 rounded-lg text-sm flex items-center gap-2">
-        <span>⚠️</span>
+      <div *ngIf="errorMessage()" class="p-3 bg-rose-50 border border-rose-200 text-rose-700 rounded-xl text-xs flex items-center gap-2">
+        <span class="text-sm">⚠️</span>
         <span>{{ errorMessage() }}</span>
       </div>
 
@@ -65,10 +133,10 @@
       <button 
         type="submit" 
         [disabled]="isLoading()"
-        class="w-full bg-sky-600 hover:bg-sky-700 disabled:bg-sky-300 text-white font-medium py-2 px-4 rounded-lg transition duration-200 shadow-md flex items-center justify-center gap-2"
+        class="w-full bg-teal-600 hover:bg-teal-700 disabled:bg-slate-300 text-white font-bold text-xs sm:text-sm py-3 px-4 rounded-xl transition-all duration-200 shadow-md shadow-teal-700/20 flex items-center justify-center gap-2 active:scale-95"
       >
         <span *ngIf="isLoading()" class="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></span>
-        <span>{{ isLoading() ? 'Iniciando sesión...' : 'Ingresar' }}</span>
+        <span>{{ isLoading() ? 'Iniciando sesión...' : 'Ingresar al Sistema' }}</span>
       </button>
     </form>
   </div>
