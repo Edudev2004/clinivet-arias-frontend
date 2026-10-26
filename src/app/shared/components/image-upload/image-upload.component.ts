@@ -1,6 +1,7 @@
-import { Component, Input, Output, EventEmitter, ElementRef, ViewChild, forwardRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ElementRef, ViewChild, forwardRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { StorageService } from '../../../core/services/storage.service';
 
 @Component({
   selector: 'app-image-upload',
@@ -185,9 +186,12 @@ import { FormsModule, ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/f
 export class ImageUploadComponent implements ControlValueAccessor {
   @ViewChild('fileInput') fileInputRef!: ElementRef<HTMLInputElement>;
 
+  private readonly storageService = inject(StorageService, { optional: true });
+
   @Input() label = 'Foto';
   @Input() helperText = 'Formatos soportados: JPG, PNG, WEBP o GIF (máx. 10 MB)';
   @Input() shape: 'rounded' | 'circle' = 'rounded';
+  @Input() folder = 'mascotas';
   @Input() disabled = false;
 
   @Output() valueChange = new EventEmitter<string>();
@@ -262,19 +266,35 @@ export class ImageUploadComponent implements ControlValueAccessor {
     this.isUploading = true;
     this.uploadError = null;
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      this.isUploading = false;
-      this.value = reader.result as string;
-      this.onChange(this.value);
-      this.valueChange.emit(this.value);
-      this.onTouched();
-    };
-    reader.onerror = () => {
-      this.isUploading = false;
-      this.uploadError = 'Error al leer el archivo seleccionado.';
-    };
-    reader.readAsDataURL(file);
+    if (this.storageService) {
+      this.storageService.uploadFile(file, this.folder).subscribe({
+        next: (res) => {
+          this.isUploading = false;
+          this.value = res.url;
+          this.onChange(this.value);
+          this.valueChange.emit(this.value);
+          this.onTouched();
+        },
+        error: (err) => {
+          this.isUploading = false;
+          this.uploadError = err?.error?.message || err?.message || 'Error al subir la imagen a Supabase Storage.';
+        }
+      });
+    } else {
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.isUploading = false;
+        this.value = reader.result as string;
+        this.onChange(this.value);
+        this.valueChange.emit(this.value);
+        this.onTouched();
+      };
+      reader.onerror = () => {
+        this.isUploading = false;
+        this.uploadError = 'Error al leer el archivo seleccionado.';
+      };
+      reader.readAsDataURL(file);
+    }
   }
 
   removerFoto(): void {
