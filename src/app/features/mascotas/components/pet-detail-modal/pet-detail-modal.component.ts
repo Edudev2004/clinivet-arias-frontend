@@ -19,7 +19,7 @@ import { Mascota } from '../../models/mascota.model';
         class="relative w-full max-w-lg bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden z-10 transition-all transform animate-in fade-in zoom-in-95 duration-200"
       >
         <!-- Cabecera con degradado sutil -->
-        <div class="relative bg-gradient-to-r from-teal-600 to-emerald-700 p-6 text-white flex items-start justify-between">
+        <div class="relative bg-gradient-to-r from-blue-600 to-indigo-700 p-6 text-white flex items-start justify-between">
           <div class="flex items-center gap-4">
             <div class="w-18 h-18 rounded-2xl bg-white/20 backdrop-blur-md border border-white/30 overflow-hidden flex items-center justify-center shadow-md">
               @if (mascota.fotoUrl && !imgError) {
@@ -44,7 +44,7 @@ import { Mascota } from '../../models/mascota.model';
                   {{ mascota.sexo === 'M' ? 'Macho' : 'Hembra' }}
                 </span>
               </div>
-              <p class="text-xs text-teal-100 font-medium">
+              <p class="text-xs text-blue-100 font-medium">
                 {{ mascota.especie }} · {{ mascota.raza || 'Mestizo / Sin raza' }}
               </p>
             </div>
@@ -122,7 +122,7 @@ import { Mascota } from '../../models/mascota.model';
               (click)="verHistorial.emit(mascota)"
               class="w-full sm:w-auto px-5 py-2.5 text-xs font-bold text-teal-700 bg-teal-50 hover:bg-teal-100 border border-teal-200 rounded-xl transition-all flex items-center justify-center gap-2"
             >
-              <svg class="w-4 h-4 text-teal-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <svg class="w-4 h-4 text-brand-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
               </svg>
               <span>Ver Historial Clínico</span>
@@ -139,7 +139,7 @@ import { Mascota } from '../../models/mascota.model';
               <button
                 type="button"
                 (click)="editar.emit(mascota)"
-                class="flex-1 sm:flex-initial px-5 py-2.5 text-xs font-bold text-white bg-teal-600 hover:bg-teal-700 rounded-xl shadow-xs hover:shadow-md transition-all flex items-center justify-center gap-2 active:scale-95"
+                class="flex-1 sm:flex-initial px-5 py-2.5 text-xs font-bold text-white bg-brand-600 hover:bg-brand-700 rounded-xl shadow-xs hover:shadow-md transition-all flex items-center justify-center gap-2 active:scale-95"
               >
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>

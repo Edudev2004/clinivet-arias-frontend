@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Mascota, MascotaCreateRequest, MascotaUpdateRequest, PropietarioResumen } from '../../models/mascota.model';
 import { MascotaService } from '../../services/mascota.service';
+import { ImageUploadComponent } from '../../../../shared/components/image-upload/image-upload.component';
 
 @Component({
   selector: 'app-pet-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, ImageUploadComponent],
   template: `
     <form [formGroup]="petForm" (ngSubmit)="onSubmit()" class="space-y-5">
       <!-- Mensaje de error general si ocurre -->
@@ -28,9 +29,9 @@ import { MascotaService } from '../../services/mascota.service';
         
         @if (propietarioSeleccionado) {
           <!-- Tarjeta de Propietario Seleccionado -->
-          <div class="flex items-center justify-between p-3 bg-teal-50 border border-teal-200 rounded-2xl">
+          <div class="flex items-center justify-between p-3 bg-blue-50 border border-blue-200 rounded-2xl">
             <div class="flex items-center gap-2.5 min-w-0">
-              <div class="w-8 h-8 rounded-full bg-teal-600 text-white flex items-center justify-center font-bold text-xs flex-shrink-0">
+              <div class="w-8 h-8 rounded-full bg-brand-600 text-white flex items-center justify-center font-bold text-xs flex-shrink-0">
                 {{ propietarioSeleccionado.nombre[0] }}
               </div>
               <div class="truncate">
@@ -59,7 +60,7 @@ import { MascotaService } from '../../services/mascota.service';
               [value]="busquedaPropietario"
               (input)="onBuscarPropietario($event)"
               placeholder="Buscar por DNI, nombre o apellido..."
-              class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:bg-white transition-all shadow-xs"
+              class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:bg-white transition-all shadow-xs"
             />
             
             <!-- Lista desplegable de sugerencias -->
@@ -69,13 +70,13 @@ import { MascotaService } from '../../services/mascota.service';
                   <button
                     type="button"
                     (click)="seleccionarPropietario(prop)"
-                    class="w-full text-left p-3 hover:bg-teal-50 flex items-center justify-between transition-colors"
+                    class="w-full text-left p-3 hover:bg-blue-50 flex items-center justify-between transition-colors"
                   >
                     <div>
                       <p class="text-xs font-bold text-slate-900">{{ prop.nombre }} {{ prop.apellido }}</p>
                       <p class="text-[11px] text-slate-500">DNI: {{ prop.dni }}</p>
                     </div>
-                    <span class="text-[11px] font-semibold text-teal-700 bg-teal-100 px-2 py-0.5 rounded-full">
+                    <span class="text-[11px] font-semibold text-brand-700 bg-blue-100 px-2 py-0.5 rounded-full">
                       Seleccionar
                     </span>
                   </button>
@@ -100,7 +101,7 @@ import { MascotaService } from '../../services/mascota.service';
           type="text"
           formControlName="nombre"
           placeholder="Ej. Bobby"
-          class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:bg-white transition-all shadow-xs"
+          class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:bg-white transition-all shadow-xs"
         />
         @if (petForm.get('nombre')?.touched && petForm.get('nombre')?.invalid) {
           <p class="text-[11px] text-rose-600 font-medium">El nombre de la mascota es obligatorio.</p>
@@ -117,7 +118,7 @@ import { MascotaService } from '../../services/mascota.service';
           <select
             id="especie"
             formControlName="especie"
-            class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs sm:text-sm text-slate-800 focus:outline-none focus:border-teal-500 focus:bg-white transition-all shadow-xs"
+            class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs sm:text-sm text-slate-800 focus:outline-none focus:border-brand-500 focus:bg-white transition-all shadow-xs"
           >
             <option value="Canino">Canino (Perro)</option>
             <option value="Felino">Felino (Gato)</option>
@@ -135,7 +136,7 @@ import { MascotaService } from '../../services/mascota.service';
           <select
             id="sexo"
             formControlName="sexo"
-            class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs sm:text-sm text-slate-800 focus:outline-none focus:border-teal-500 focus:bg-white transition-all shadow-xs"
+            class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs sm:text-sm text-slate-800 focus:outline-none focus:border-brand-500 focus:bg-white transition-all shadow-xs"
           >
             <option value="M">Macho</option>
             <option value="H">Hembra</option>
@@ -154,7 +155,7 @@ import { MascotaService } from '../../services/mascota.service';
             type="text"
             formControlName="raza"
             placeholder="Ej. Golden Retriever"
-            class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:bg-white transition-all shadow-xs"
+            class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:bg-white transition-all shadow-xs"
           />
         </div>
 
@@ -167,7 +168,7 @@ import { MascotaService } from '../../services/mascota.service';
             type="text"
             formControlName="color"
             placeholder="Ej. Dorado / Blanco"
-            class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:bg-white transition-all shadow-xs"
+            class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:bg-white transition-all shadow-xs"
           />
         </div>
       </div>
@@ -184,7 +185,7 @@ import { MascotaService } from '../../services/mascota.service';
             step="0.01"
             formControlName="pesoActualKg"
             placeholder="Ej. 28.50"
-            class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:bg-white transition-all shadow-xs"
+            class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:bg-white transition-all shadow-xs"
           />
           @if (petForm.get('pesoActualKg')?.touched && petForm.get('pesoActualKg')?.invalid) {
             <p class="text-[11px] text-rose-600 font-medium">El peso debe ser mayor a 0 kg.</p>
@@ -199,23 +200,18 @@ import { MascotaService } from '../../services/mascota.service';
             id="fechaNacimiento"
             type="date"
             formControlName="fechaNacimiento"
-            class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-800 focus:outline-none focus:border-teal-500 focus:bg-white transition-all shadow-xs"
+            class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-800 focus:outline-none focus:border-brand-500 focus:bg-white transition-all shadow-xs"
           />
         </div>
       </div>
 
-      <!-- 6. URL de Foto (Opcional) -->
+      <!-- 6. Fotografía de la Mascota con subida drag-and-drop (Estilo VetHD) -->
       <div class="space-y-1 text-left">
-        <label for="fotoUrl" class="block text-xs font-bold uppercase tracking-wider text-slate-700">
-          Enlace a Foto (Opcional)
-        </label>
-        <input
-          id="fotoUrl"
-          type="url"
+        <app-image-upload
           formControlName="fotoUrl"
-          placeholder="https://ejemplo.com/foto-mascota.jpg"
-          class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:bg-white transition-all shadow-xs"
-        />
+          label="Fotografía de la Mascota"
+          helperText="Formatos soportados: JPG, PNG o WEBP. Arrastra una imagen o ingresa una URL."
+        ></app-image-upload>
       </div>
 
       <!-- Botones de Acción -->
@@ -223,14 +219,14 @@ import { MascotaService } from '../../services/mascota.service';
         <button
           type="button"
           (click)="cancelar.emit()"
-          class="px-4 py-2.5 text-xs font-semibold text-slate-600 hover:text-slate-900 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all"
+          class="px-4 py-2.5 text-xs font-semibold text-slate-600 hover:text-slate-900 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all cursor-pointer"
         >
           Cancelar
         </button>
         <button
           type="submit"
           [disabled]="petForm.invalid || isSubmitting"
-          class="px-6 py-2.5 text-xs font-bold text-white bg-teal-600 hover:bg-teal-700 disabled:bg-slate-300 disabled:cursor-not-allowed rounded-xl shadow-xs hover:shadow-md transition-all flex items-center gap-2 active:scale-95"
+          class="px-6 py-2.5 text-xs font-bold text-white bg-brand-600 hover:bg-brand-700 disabled:bg-slate-300 disabled:cursor-not-allowed rounded-xl shadow-xs hover:shadow-md transition-all flex items-center gap-2 active:scale-95 cursor-pointer"
         >
           @if (isSubmitting) {
             <svg class="animate-spin h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24">

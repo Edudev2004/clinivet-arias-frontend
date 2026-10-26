@@ -45,13 +45,11 @@ export interface EntradaHistorial {
         <div
           class="relative w-full max-w-4xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden z-10 transition-all transform animate-in fade-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]"
         >
-          <!-- Cabecera con degradado Teal -->
-          <div class="relative bg-gradient-to-r from-teal-700 via-teal-600 to-emerald-700 p-6 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <!-- Cabecera con degradado Azul Institucional Clinivet Arias -->
+          <div class="relative bg-gradient-to-r from-blue-700 via-blue-600 to-indigo-700 p-6 text-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div class="flex items-center gap-4">
-              <div class="w-14 h-14 rounded-2xl bg-white/20 backdrop-blur-md border border-white/30 flex items-center justify-center flex-shrink-0 shadow-inner">
-                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                </svg>
+              <div class="w-14 h-14 rounded-2xl bg-white p-2 border border-white/40 flex items-center justify-center flex-shrink-0 shadow-md">
+                <img src="assets/img/logo.png" alt="Clinivet Arias" class="w-10 h-10 object-contain" />
               </div>
               <div>
                 <div class="flex items-center gap-2 flex-wrap">
@@ -62,7 +60,7 @@ export interface EntradaHistorial {
                     {{ entradas.length }} Atenciones Registradas
                   </span>
                 </div>
-                <p class="text-xs text-teal-100 font-medium mt-0.5">
+                <p class="text-xs text-blue-100 font-medium mt-0.5">
                   Historial médico veterinario, triajes, diagnósticos y tratamientos
                 </p>
               </div>

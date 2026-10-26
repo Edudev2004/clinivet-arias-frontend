@@ -26,25 +26,18 @@ interface NavItem {
       <!-- Sección Superior: Marca y Enlaces de Navegación -->
       <div class="flex flex-col gap-6">
         <!-- Logotipo y Nombre de la Clínica -->
-        <div class="flex items-center gap-3 px-2 pt-2 overflow-hidden">
-          <div class="w-10 h-10 rounded-xl bg-teal-600 text-white flex items-center justify-center flex-shrink-0 shadow-md shadow-teal-700/20">
-            <!-- Icono Estetoscopio Veterinario -->
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 4.5v3a7.5 7.5 0 0015 0v-3m-15 0h3m12 0h-3m-7.5 7.5v3.75a3.75 3.75 0 007.5 0v-1.5m0 0a1.5 1.5 0 10-3 0 1.5 1.5 0 003 0z"/>
-            </svg>
+        <a routerLink="/mascotas" class="flex items-center gap-3 px-1 pt-1 overflow-hidden cursor-pointer group">
+          <div class="w-11 h-11 rounded-xl bg-white border border-slate-200/90 p-1.5 flex items-center justify-center flex-shrink-0 shadow-2xs group-hover:border-brand-300 transition-colors">
+            <img src="assets/img/logo.png" alt="Clinivet Arias" class="w-8 h-8 object-contain" />
           </div>
           <div
-            class="transition-opacity duration-200 whitespace-nowrap"
+            class="transition-opacity duration-200 whitespace-nowrap overflow-hidden flex items-center"
             [ngClass]="isHovered ? 'opacity-100' : 'opacity-0'"
           >
-            <h1 class="text-base font-extrabold text-slate-900 tracking-tight font-outfit">
-              Clinivet Arias
-            </h1>
-            <p class="text-[11px] font-semibold text-teal-700 uppercase tracking-wider">
-              Centro Veterinario
-            </p>
+            <img src="assets/img/logo-horizontal.png" alt="Clinivet Arias" class="h-8 object-contain" />
+            <span class="sr-only">Clinivet Arias</span>
           </div>
-        </div>
+        </a>
 
         <!-- Selector de Perspectiva de Rol (Tabla 40 de APF2) -->
         <div
@@ -57,7 +50,7 @@ interface NavItem {
           <select
             [value]="activeRole"
             (change)="cambiarRol($event)"
-            class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-slate-700 focus:outline-none focus:border-teal-500 shadow-xs"
+            class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-slate-700 focus:outline-none focus:border-brand-500 shadow-xs"
           >
             <option value="ADMIN">Administrador</option>
             <option value="VETERINARIO">Médico Veterinario</option>
@@ -70,19 +63,19 @@ interface NavItem {
           @for (item of filteredNavItems; track item.path) {
             <a
               [routerLink]="item.path"
-              routerLinkActive="bg-white text-teal-700 shadow-xs border border-teal-100"
+              routerLinkActive="bg-white text-brand-700 shadow-xs border border-brand-100"
               [routerLinkActiveOptions]="{ exact: item.path === '/' }"
-              class="flex items-center gap-3.5 px-3 py-2.5 rounded-xl text-slate-600 hover:text-teal-700 hover:bg-white/80 transition-all group overflow-hidden"
+              class="flex items-center gap-3.5 px-3 py-2.5 rounded-xl text-slate-600 hover:text-brand-700 hover:bg-white/80 transition-all group overflow-hidden"
               [title]="!isHovered ? item.name : ''"
             >
-              <div class="flex-shrink-0 text-slate-500 group-hover:text-teal-600 transition-colors">
+              <div class="flex-shrink-0 text-slate-500 group-hover:text-brand-600 transition-colors">
                 <!-- Iconos SVG según el nombre -->
                 @if (item.icon === 'dashboard') {
                   <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"/>
                   </svg>
                 } @else if (item.icon === 'pets') {
-                  <svg class="w-5 h-5 text-teal-600" fill="currentColor" viewBox="0 0 24 24">
+                  <svg class="w-5 h-5 text-brand-600" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M12 8.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zm-4.5 1a2 2 0 100-4 2 2 0 000 4zm9 0a2 2 0 100-4 2 2 0 000 4zM5 14a2 2 0 100-4 2 2 0 000 4zm14 0a2 2 0 100-4 2 2 0 000 4zm-7 6.5c2.5 0 4.5-1.5 4.5-3.5 0-1.8-1.5-2.5-4.5-4-3 1.5-4.5 2.2-4.5 4 0 2 2 3.5 4.5 3.5z"/>
                   </svg>
                 } @else if (item.icon === 'calendar') {

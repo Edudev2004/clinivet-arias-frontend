@@ -1,11 +1,40 @@
-@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  /* Paleta Oficial Clinivet Arias extraída del logotipo */
+  --color-primary: #1e6ff9;
+  --color-primary-hover: #1858c7;
+  --color-primary-light: #eff6ff;
+  --color-brand-dark: #0f172a;
+
+  /* Escala de azules institucionales */
+  --brand-50: #eff6ff;
+  --brand-100: #dbeafe;
+  --brand-200: #bfdbfe;
+  --brand-300: #93c5fd;
+  --brand-400: #60a5fa;
+  --brand-500: #3b82f6;
+  --brand-600: #1e6ff9;
+  --brand-700: #1d4ed8;
+  --brand-800: #1e40af;
+  --brand-900: #1e3a8a;
+  --brand-950: #0f172a;
+
+  /* Acento dorado/ámbar complementario de VetHD */
+  --color-secondary: #f59e0b;
+}
+
 @layer base {
   body {
     @apply font-['Plus_Jakarta_Sans',sans-serif] bg-slate-50 text-slate-800 antialiased min-h-screen;
   }
+
+  .font-outfit {
+    font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+  }
 }
+

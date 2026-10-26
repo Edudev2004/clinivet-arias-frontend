@@ -38,7 +38,7 @@ import { ConfirmModalComponent } from '../../../../shared/components/confirm-mod
           type="button"
           (click)="toggleFormulario()"
           class="px-5 py-2.5 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-2 shadow-xs active:scale-95"
-          [ngClass]="showForm() ? 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50' : 'bg-teal-600 hover:bg-teal-700 text-white shadow-teal-700/20 shadow-md'"
+          [ngClass]="showForm() ? 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50' : 'bg-brand-600 hover:bg-brand-700 text-white shadow-brand-700/20 shadow-md'"
         >
           @if (showForm()) {
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -87,7 +87,7 @@ import { ConfirmModalComponent } from '../../../../shared/components/confirm-mod
             [ngModel]="terminoBusqueda()"
             (ngModelChange)="terminoBusqueda.set($event)"
             placeholder="Buscar por nombre, raza o propietario..."
-            class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-teal-500 focus:bg-white transition-all shadow-xs"
+            class="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2 text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-brand-500 focus:bg-white transition-all shadow-xs"
           />
         </div>
 
@@ -98,7 +98,7 @@ import { ConfirmModalComponent } from '../../../../shared/components/confirm-mod
               type="button"
               (click)="especieSeleccionada.set(esp)"
               class="px-3 py-1.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap"
-              [ngClass]="especieSeleccionada() === esp ? 'bg-teal-600 text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
+              [ngClass]="especieSeleccionada() === esp ? 'bg-brand-600 text-white shadow-xs' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'"
             >
               {{ esp }}
             </button>

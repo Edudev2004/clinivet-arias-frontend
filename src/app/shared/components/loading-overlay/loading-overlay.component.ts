@@ -40,7 +40,7 @@ import { CommonModule } from '@angular/common';
       height: 20px;
       position: absolute;
       border-radius: 50%;
-      background-color: #0D7C84;
+      background-color: #1e6ff9;
       left: 15%;
       transform-origin: 50%;
       animation: vet-bounce 0.6s alternate infinite ease;
@@ -56,14 +56,14 @@ import { CommonModule } from '@angular/common';
       left: auto;
       right: 15%;
       animation-delay: 0.3s;
-      background-color: #0D7C84;
+      background-color: #1e6ff9;
     }
 
     .vet-shadow {
       width: 20px;
       height: 4px;
       border-radius: 50%;
-      background-color: rgba(13, 124, 132, 0.25);
+      background-color: rgba(30, 111, 249, 0.25);
       position: absolute;
       top: 58px;
       transform-origin: 50%;
@@ -89,9 +89,14 @@ import { CommonModule } from '@angular/common';
       <div
         class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white/90 backdrop-blur-sm animate-in fade-in duration-200"
       >
-        <!-- Logo / Marca -->
-        <div class="mb-8 text-2xl sm:text-3xl font-black tracking-tight text-slate-900 font-outfit">
-          Clinivet <span class="text-[#F59E0B]">Arias</span>
+        <!-- Logo / Marca Oficial -->
+        <div class="mb-8 flex flex-col items-center">
+          <img
+            src="assets/img/logo-horizontal.png"
+            alt="Clinivet Arias"
+            class="h-14 sm:h-16 object-contain drop-shadow-xs"
+          />
+          <span class="sr-only">Clinivet Arias</span>
         </div>
 
         <!-- Animación de esferas veterinarias rebotantes (VetHD) -->

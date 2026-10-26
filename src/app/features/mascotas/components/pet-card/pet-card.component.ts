@@ -23,7 +23,7 @@ import { Mascota } from '../../models/mascota.model';
                 (error)="imgError = true"
               />
             } @else {
-              <svg class="w-7 h-7 text-teal-600" fill="currentColor" viewBox="0 0 24 24">
+              <svg class="w-7 h-7 text-brand-600" fill="currentColor" viewBox="0 0 24 24">
                 <path d="M12 8.5a2.5 2.5 0 100-5 2.5 2.5 0 000 5zm-4.5 1a2 2 0 100-4 2 2 0 000 4zm9 0a2 2 0 100-4 2 2 0 000 4zM5 14a2 2 0 100-4 2 2 0 000 4zm14 0a2 2 0 100-4 2 2 0 000 4zm-7 6.5c2.5 0 4.5-1.5 4.5-3.5 0-1.8-1.5-2.5-4.5-4-3 1.5-4.5 2.2-4.5 4 0 2 2 3.5 4.5 3.5z"/>
               </svg>
             }
@@ -47,7 +47,7 @@ import { Mascota } from '../../models/mascota.model';
         </div>
 
         <!-- Nombre y Raza -->
-        <h3 class="text-lg font-bold text-slate-900 group-hover:text-teal-700 transition-colors">
+        <h3 class="text-lg font-bold text-slate-900 group-hover:text-brand-600 transition-colors">
           {{ mascota.nombre }}
         </h3>
         <p class="text-xs text-slate-500 font-medium capitalize">
@@ -57,7 +57,7 @@ import { Mascota } from '../../models/mascota.model';
         <!-- Propietario vinculado (RN-01) -->
         @if (mascota.propietarioNombre) {
           <div class="mt-2.5 flex items-center gap-1.5 text-xs text-slate-600 bg-slate-50 px-2.5 py-1.5 rounded-xl border border-slate-100">
-            <svg class="w-3.5 h-3.5 text-teal-600 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <svg class="w-3.5 h-3.5 text-brand-600 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
             </svg>
             <span class="truncate font-semibold">{{ mascota.propietarioNombre }}</span>
@@ -70,7 +70,7 @@ import { Mascota } from '../../models/mascota.model';
         <button
           type="button"
           (click)="onVerFicha(); $event.stopPropagation()"
-          class="text-xs font-bold text-slate-600 hover:text-teal-700 flex items-center gap-1 py-1 focus:outline-none"
+          class="text-xs font-bold text-slate-600 hover:text-brand-700 flex items-center gap-1 py-1 focus:outline-none"
         >
           <span>Ficha Técnica</span>
           <svg class="w-3.5 h-3.5 text-slate-400 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -81,7 +81,7 @@ import { Mascota } from '../../models/mascota.model';
         <button
           type="button"
           (click)="onVerHistorialClick($event)"
-          class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-teal-700 hover:text-white bg-teal-50 hover:bg-teal-600 border border-teal-200 hover:border-teal-600 rounded-xl transition-all shadow-xs active:scale-95"
+          class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold text-brand-700 hover:text-white bg-blue-50 hover:bg-brand-600 border border-brand-200 hover:border-brand-600 rounded-xl transition-all shadow-xs active:scale-95"
           title="Consultar historial clínico"
         >
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
