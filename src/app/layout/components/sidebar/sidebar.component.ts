@@ -26,17 +26,19 @@ interface NavItem {
       <!-- Sección Superior: Marca y Enlaces de Navegación -->
       <div class="flex flex-col gap-6">
         <!-- Logotipo y Nombre de la Clínica -->
-        <a routerLink="/mascotas" class="flex items-center gap-3 px-1 pt-1 overflow-hidden cursor-pointer group">
-          <div class="w-11 h-11 rounded-xl bg-white border border-slate-200/90 p-1.5 flex items-center justify-center flex-shrink-0 shadow-2xs group-hover:border-brand-300 transition-colors">
-            <img src="assets/img/logo.png" alt="Clinivet Arias" class="w-8 h-8 object-contain" />
-          </div>
-          <div
-            class="transition-opacity duration-200 whitespace-nowrap overflow-hidden flex items-center"
-            [ngClass]="isHovered ? 'opacity-100' : 'opacity-0'"
-          >
-            <img src="assets/img/logo-horizontal.png" alt="Clinivet Arias" class="h-8 object-contain" />
-            <span class="sr-only">Clinivet Arias</span>
-          </div>
+        <a routerLink="/mascotas" class="flex items-center px-1 pt-1 overflow-hidden cursor-pointer group h-12">
+          @if (!isHovered) {
+            <!-- Modo Colapsado: Solo Isotipo cuadrado centrado -->
+            <div class="w-11 h-11 rounded-xl bg-white border border-slate-200/90 p-1.5 flex items-center justify-center flex-shrink-0 shadow-2xs group-hover:border-brand-300 transition-all duration-200">
+              <img src="assets/img/logo.png" alt="Clinivet Arias" class="w-8 h-8 object-contain" />
+            </div>
+          } @else {
+            <!-- Modo Desplegado: Solo Logotipo Horizontal Completo -->
+            <div class="flex items-center px-1 animate-in fade-in duration-200">
+              <img src="assets/img/logo-horizontal.png" alt="Clinivet Arias" class="h-9 max-w-[200px] object-contain" />
+            </div>
+          }
+          <span class="sr-only">Clinivet Arias</span>
         </a>
 
         <!-- Selector de Perspectiva de Rol (Tabla 40 de APF2) -->
