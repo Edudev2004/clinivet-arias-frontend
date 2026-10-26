@@ -226,17 +226,19 @@ import { ImageUploadComponent } from '../../../../shared/components/image-upload
         <button
           type="submit"
           [disabled]="petForm.invalid || isSubmitting"
-          class="px-6 py-2.5 text-xs font-bold text-white bg-brand-600 hover:bg-brand-700 disabled:bg-slate-300 disabled:cursor-not-allowed rounded-xl shadow-xs hover:shadow-md transition-all flex items-center gap-2 active:scale-95 cursor-pointer"
+          class="relative overflow-hidden px-7 py-3 text-sm font-extrabold text-white bg-[#1e6ff9] border-2 border-[#1e6ff9] hover:bg-[#1858c7] hover:border-[#1858c7] hover:shadow-[0_4px_14px_rgba(30,111,249,0.35)] shadow-[0_3px_0_1px_rgba(30,111,249,0.3)] disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 rounded-xl transition-all duration-300 flex items-center gap-2 active:scale-95 cursor-pointer group"
         >
-          @if (isSubmitting) {
-            <svg class="animate-spin h-3.5 w-3.5 text-white" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"></path>
-            </svg>
-            <span>Guardando...</span>
-          } @else {
-            <span>{{ mascota ? 'Guardar Cambios' : 'Registrar Mascota' }}</span>
-          }
+          <!-- Animated Skew Light Bar (#F59E0B / Amber shine effect - 1s duration) -->
+          <span class="absolute top-1/2 left-0 w-28 h-[160%] bg-[#F59E0B] opacity-90 -translate-y-1/2 skew-x-[30deg] -translate-x-44 transition-transform duration-1000 ease-in-out group-hover:translate-x-[480px]"></span>
+
+          <span class="relative z-10 flex items-center justify-center gap-2">
+            @if (isSubmitting) {
+              <span class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+              <span>Guardando...</span>
+            } @else {
+              <span>{{ mascota ? 'Guardar Cambios' : 'Registrar Mascota' }}</span>
+            }
+          </span>
         </button>
       </div>
     </form>

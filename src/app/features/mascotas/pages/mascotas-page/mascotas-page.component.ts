@@ -37,20 +37,27 @@ import { ConfirmModalComponent } from '../../../../shared/components/confirm-mod
         <button
           type="button"
           (click)="toggleFormulario()"
-          class="px-5 py-2.5 rounded-xl font-bold text-xs transition-all flex items-center justify-center gap-2 shadow-xs active:scale-95"
-          [ngClass]="showForm() ? 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50' : 'bg-brand-600 hover:bg-brand-700 text-white shadow-brand-700/20 shadow-md'"
+          class="relative overflow-hidden px-6 py-2.5 rounded-xl font-extrabold text-xs sm:text-sm transition-all duration-300 flex items-center justify-center gap-2 cursor-pointer border-2 active:scale-95 group"
+          [ngClass]="showForm() ? 'bg-white text-slate-700 border-slate-200 hover:bg-slate-50' : 'bg-[#1e6ff9] text-white border-[#1e6ff9] hover:bg-[#1858c7] hover:border-[#1858c7] hover:shadow-[0_4px_14px_rgba(30,111,249,0.35)] shadow-[0_3px_0_1px_rgba(30,111,249,0.3)]'"
         >
-          @if (showForm()) {
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-            </svg>
-            <span>Cancelar</span>
-          } @else {
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
-            </svg>
-            <span>Registrar Mascota</span>
+          <!-- Animated Skew Light Bar (#F59E0B / Amber shine effect - 1s duration) -->
+          @if (!showForm()) {
+            <span class="absolute top-1/2 left-0 w-28 h-[160%] bg-[#F59E0B] opacity-90 -translate-y-1/2 skew-x-[30deg] -translate-x-44 transition-transform duration-1000 ease-in-out group-hover:translate-x-[480px]"></span>
           }
+
+          <span class="relative z-10 flex items-center gap-2">
+            @if (showForm()) {
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+              </svg>
+              <span>Cancelar</span>
+            } @else {
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15"/>
+              </svg>
+              <span>Registrar Mascota</span>
+            }
+          </span>
         </button>
       </div>
 

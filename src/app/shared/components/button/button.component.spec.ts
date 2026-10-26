@@ -27,4 +27,18 @@ describe('ButtonComponent', () => {
     const btn = fixture.nativeElement.querySelector('button') as HTMLButtonElement;
     expect(btn.disabled).toBeTrue();
   });
+
+  it('debe emitir evento onClick al hacer click', () => {
+    spyOn(component.onClick, 'emit');
+    const btn = fixture.nativeElement.querySelector('button') as HTMLButtonElement;
+    btn.click();
+    expect(component.onClick.emit).toHaveBeenCalled();
+  });
+
+  it('debe aplicar className personalizada', () => {
+    component.className = 'extra-custom-class';
+    fixture.detectChanges();
+    const btn = fixture.nativeElement.querySelector('button') as HTMLButtonElement;
+    expect(btn.className).toContain('extra-custom-class');
+  });
 });

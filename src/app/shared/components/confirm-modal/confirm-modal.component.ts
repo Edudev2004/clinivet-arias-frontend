@@ -80,21 +80,26 @@ export type ModalVariant = 'danger' | 'warning' | 'primary';
               type="button"
               (click)="onConfirm()"
               [disabled]="isLoading"
-              class="w-full sm:flex-1 py-3 px-5 rounded-xl font-bold text-xs sm:text-sm text-white shadow-lg transition-all active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2 cursor-pointer"
+              class="relative overflow-hidden w-full sm:flex-1 py-3.5 px-7 rounded-xl font-extrabold text-sm text-white transition-all duration-300 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:active:scale-100 flex items-center justify-center gap-2 cursor-pointer border-2 group"
               [ngClass]="{
-                'bg-rose-600 hover:bg-rose-700 shadow-rose-600/25': variant === 'danger',
-                'bg-amber-600 hover:bg-amber-700 shadow-amber-600/25': variant === 'warning',
-                'bg-brand-600 hover:bg-brand-700 shadow-brand-700/25': variant === 'primary'
+                'bg-rose-600 border-rose-600 hover:bg-rose-700 hover:border-rose-700 hover:shadow-[0_4px_14px_rgba(225,29,72,0.35)] shadow-[0_3px_0_1px_rgba(225,29,72,0.3)]': variant === 'danger',
+                'bg-[#F59E0B] text-slate-950 border-[#F59E0B] hover:bg-[#d97706] hover:text-white shadow-[0_3px_0_1px_rgba(245,158,11,0.3)]': variant === 'warning',
+                'bg-[#1e6ff9] text-white border-[#1e6ff9] hover:bg-[#1858c7] hover:border-[#1858c7] hover:shadow-[0_4px_14px_rgba(30,111,249,0.35)] shadow-[0_3px_0_1px_rgba(30,111,249,0.3)]': variant === 'primary'
               }"
             >
-              @if (isLoading) {
-                <span class="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
-              } @else {
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"/>
-                </svg>
-                <span>{{ confirmText }}</span>
-              }
+              <!-- Animated Skew Light Bar (#F59E0B / Amber shine effect - 1s duration) -->
+              <span class="absolute top-1/2 left-0 w-28 h-[160%] bg-[#F59E0B] opacity-90 -translate-y-1/2 skew-x-[30deg] -translate-x-44 transition-transform duration-1000 ease-in-out group-hover:translate-x-[480px]"></span>
+
+              <span class="relative z-10 flex items-center justify-center gap-2">
+                @if (isLoading) {
+                  <span class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+                } @else {
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75"/>
+                  </svg>
+                  <span>{{ confirmText }}</span>
+                }
+              </span>
             </button>
           </div>
         </div>

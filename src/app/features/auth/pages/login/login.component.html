@@ -164,17 +164,23 @@
         <span>{{ errorMessage() }}</span>
       </div>
 
-      <!-- Botón de Ingreso con Paleta Institucional -->
+      <!-- Botón de Ingreso con Efecto Skew Luminoso y Paleta Institucional (Estilo VetHD) -->
       <button 
         type="submit" 
         [disabled]="isLoading()"
-        class="w-full bg-brand-600 hover:bg-brand-700 disabled:bg-slate-300 text-white font-bold text-xs sm:text-sm py-3 px-4 rounded-xl transition-all duration-200 shadow-md shadow-brand-700/20 flex items-center justify-center gap-2 active:scale-95 cursor-pointer mt-2"
+        class="relative overflow-hidden w-full bg-[#1e6ff9] text-white border-2 border-[#1e6ff9] hover:bg-[#1858c7] hover:border-[#1858c7] hover:shadow-[0_4px_14px_rgba(30,111,249,0.35)] shadow-[0_3px_0_1px_rgba(30,111,249,0.3)] disabled:opacity-50 disabled:cursor-not-allowed font-extrabold text-sm py-3.5 px-7 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 active:scale-95 cursor-pointer mt-2 group"
       >
-        <svg *ngIf="isLoading()" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-        </svg>
-        <span>{{ isLoading() ? 'Iniciando sesión...' : 'Ingresar al sistema' }}</span>
+        <!-- Animated Skew Light Bar (#F59E0B / Amber shine effect - 1s duration) -->
+        <span class="absolute top-1/2 left-0 w-28 h-[160%] bg-[#F59E0B] opacity-90 -translate-y-1/2 skew-x-[30deg] -translate-x-44 transition-transform duration-1000 ease-in-out group-hover:translate-x-[480px]"></span>
+
+        <span class="relative z-10 flex items-center justify-center gap-2">
+          @if (isLoading()) {
+            <span class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></span>
+            <span>Iniciando sesión...</span>
+          } @else {
+            <span>Ingresar al sistema</span>
+          }
+        </span>
       </button>
     </form>
   </div>
