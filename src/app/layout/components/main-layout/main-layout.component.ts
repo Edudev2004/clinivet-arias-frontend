@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { HeaderComponent } from '../header/header.component';
 import { ConfirmModalComponent } from '../../../shared/components/confirm-modal/confirm-modal.component';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-main-layout',
@@ -16,18 +17,23 @@ import { ConfirmModalComponent } from '../../../shared/components/confirm-modal/
 
       <!-- Área de contenido principal -->
       <div class="flex-1 flex flex-col pl-0 md:pl-20 transition-all duration-300 min-w-0 pb-16 md:pb-8">
-        <app-header (solicitarLogout)="mostrarModalLogout = true"></app-header>
+        <app-header
+          [userName]="userName"
+          [userFullName]="userFullName"
+          [role]="userRole"
+          (solicitarLogout)="mostrarModalLogout = true"
+        ></app-header>
 
         <main class="flex-1 p-4 md:p-8 max-w-7xl w-full mx-auto animate-in fade-in duration-200">
           <router-outlet></router-outlet>
         </main>
       </div>
 
-      <!-- Modal de confirmación para cerrar sesión -->
+      <!-- Modal de confirmación para cerrar sesión (RN-07 / APF2) -->
       <app-confirm-modal
         [isOpen]="mostrarModalLogout"
         title="¿Cerrar Sesión?"
-        description="¿Estás seguro de que deseas salir del sistema Clinivet Arias? Deberás ingresar tus credenciales nuevamente."
+        description="¿Estás seguro de que deseas salir del sistema Clinivet Arias? Deberás ingresar tus credenciales nuevamente para acceder."
         confirmText="Sí, Cerrar Sesión"
         cancelText="Cancelar"
         variant="danger"
@@ -38,11 +44,33 @@ import { ConfirmModalComponent } from '../../../shared/components/confirm-modal/
   `
 })
 export class MainLayoutComponent {
+  private readonly authService = inject(AuthService);
   mostrarModalLogout = false;
+
+  get currentUser() {
+    return this.authService.currentUser();
+  }
+
+  get userName(): string {
+    return this.currentUser?.nombre?.split(' ')[0] || 'Rommel';
+  }
+
+  get userFullName(): string {
+    return this.currentUser
+      ? `${this.currentUser.nombre} ${this.currentUser.apellido}`
+      : 'Rommel Navarro';
+  }
+
+  get userRole(): 'ADMIN' | 'VETERINARIO' | 'RECEPCIONISTA' {
+    const rol = this.currentUser?.rol;
+    if (rol === 'VETERINARIO' || rol === 'RECEPCIONISTA') {
+      return rol;
+    }
+    return 'ADMIN';
+  }
 
   confirmarLogout(): void {
     this.mostrarModalLogout = false;
-    // Notificación en consola o redirección cuando el módulo de autenticación de Lucero esté integrado
-    console.info('Cierre de sesión solicitado por el usuario.');
+    this.authService.logout();
   }
 }
