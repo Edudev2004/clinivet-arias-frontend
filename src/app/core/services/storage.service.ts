@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of, catchError, map } from 'rxjs';
+import { Observable, of, from, catchError } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 export interface UploadResponse {
@@ -21,8 +21,7 @@ export class StorageService {
   private readonly bucket = 'clinivet-arias';
 
   /**
-   * Sube un archivo de imagen o documento a Supabase Storage a través del backend,
-   * o directamente a Supabase si el backend local no está corriendo.
+   * Sube un archivo a Supabase Storage mediante el backend o directo a Supabase.
    */
   uploadFile(file: File, folder: string = 'mascotas'): Observable<UploadResponse> {
     if (!this.http) {
@@ -37,33 +36,67 @@ export class StorageService {
     formData.append('file', file);
     formData.append('folder', folder);
 
-    // Intenta subir mediante el backend; si el backend no responde, sube directo a Supabase
     return this.http.post<UploadResponse>(this.apiUrl, formData).pipe(
       catchError(() => this.uploadDirectToSupabase(file, folder))
     );
   }
 
   /**
-   * Subida directa hacia la API REST de Supabase Storage usando la service_role key.
+   * Subida directa hacia la API REST de Supabase Storage usando fetch nativo con la service_role key.
    */
-  private uploadDirectToSupabase(file: File, folder: string): Observable<UploadResponse> {
+  uploadDirectToSupabase(file: File, folder: string = 'mascotas'): Observable<UploadResponse> {
     const ext = file.name.split('.').pop() || 'jpg';
     const uniqueName = `${folder}/${Date.now()}-${Math.random().toString(36).substring(2, 8)}.${ext}`;
     const uploadUrl = `${this.supabaseUrl}/storage/v1/object/${this.bucket}/${uniqueName}`;
     const publicUrl = `${this.supabaseUrl}/storage/v1/object/public/${this.bucket}/${uniqueName}`;
 
-    return this.http!.post(uploadUrl, file, {
-      headers: {
-        'apikey': this.supabaseKey,
-        'Authorization': `Bearer ${this.supabaseKey}`,
-        'Content-Type': file.type || 'image/jpeg'
-      }
-    }).pipe(
-      map(() => ({
-        url: publicUrl,
-        fileName: file.name,
-        size: file.size
-      }))
+    return from(
+      fetch(uploadUrl, {
+        method: 'POST',
+        headers: {
+          'apikey': this.supabaseKey,
+          'Authorization': `Bearer ${this.supabaseKey}`,
+          'Content-Type': file.type || 'image/jpeg'
+        },
+        body: file
+      }).then(async (response) => {
+        if (!response.ok) {
+          const err = await response.text();
+          throw new Error('Supabase Storage error: ' + err);
+        }
+        return {
+          url: publicUrl,
+          fileName: file.name,
+          size: file.size
+        };
+      })
     );
+  }
+
+  /**
+   * Sube una imagen en base64 (Data URL) a Supabase Storage.
+   */
+  uploadBase64(base64Data: string, folder: string = 'mascotas'): Observable<UploadResponse> {
+    try {
+      const parts = base64Data.split(';base64,');
+      const contentType = parts[0].replace('data:', '') || 'image/jpeg';
+      const ext = contentType.split('/')[1] || 'jpg';
+      const byteCharacters = atob(parts[1]);
+      const byteNumbers = new Array(byteCharacters.length);
+      for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+      }
+      const byteArray = new Uint8Array(byteNumbers);
+      const blob = new Blob([byteArray], { type: contentType });
+      const file = new File([blob], `migrated-${Date.now()}.${ext}`, { type: contentType });
+
+      return this.uploadDirectToSupabase(file, folder);
+    } catch {
+      return of({
+        url: base64Data,
+        fileName: 'fallback.jpg',
+        size: 0
+      });
+    }
   }
 }

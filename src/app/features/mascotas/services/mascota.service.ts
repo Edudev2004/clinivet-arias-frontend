@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
 import { environment } from '../../../../environments/environment';
+import { StorageService } from '../../../core/services/storage.service';
 import {
   Mascota,
   MascotaCreateRequest,
@@ -21,6 +22,7 @@ import {
 })
 export class MascotaService {
   private readonly http = inject(HttpClient);
+  private readonly storageService = inject(StorageService, { optional: true });
   private readonly apiUrl = `${environment.apiUrl}/mascotas`;
   private readonly propietariosUrl = `${environment.apiUrl}/propietarios`;
 
@@ -122,12 +124,28 @@ export class MascotaService {
     this.cargarDeStorage();
     this.cargarPropietarios();
     this.mascotas.set([...this.mascotasLocales]);
+    this.migrarFotosBase64ASupabase();
   }
 
   private guardarEnStorage(): void {
     try {
       localStorage.setItem(this.STORAGE_KEY, JSON.stringify(this.mascotasLocales));
     } catch {}
+  }
+
+  private migrarFotosBase64ASupabase(): void {
+    if (!this.storageService) return;
+    this.mascotasLocales.forEach((m) => {
+      if (m.fotoUrl && m.fotoUrl.startsWith('data:image/')) {
+        this.storageService!.uploadBase64(m.fotoUrl, 'mascotas').subscribe({
+          next: (res) => {
+            m.fotoUrl = res.url;
+            this.guardarEnStorage();
+            this.mascotas.set([...this.mascotasLocales]);
+          }
+        });
+      }
+    });
   }
 
   private cargarDeStorage(): void {
