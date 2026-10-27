@@ -47,7 +47,7 @@ export class LoginComponent {
 
     const { email, password } = this.loginForm.value;
 
-    this.authService.login({ email: email!, password_hash: password! }).subscribe({
+    this.authService.login({ email: email!, password: password!, password_hash: password! }).subscribe({
       next: () => {
         this.isLoading.set(false);
       },
@@ -55,8 +55,12 @@ export class LoginComponent {
         this.isLoading.set(false);
         if (err.status === 401) {
           this.errorMessage.set('Credenciales incorrectas. Verifica tu correo y contraseña.');
+        } else if (err.status === 403) {
+          this.errorMessage.set('Tu cuenta está desactivada. Contacta al administrador.');
+        } else if (err.status === 0) {
+          this.errorMessage.set('No se pudo conectar con el servidor (backend apagado en el puerto 8080).');
         } else {
-          this.errorMessage.set('Ocurrió un error en el servidor. Inténtalo de nuevo.');
+          this.errorMessage.set('Ocurrió un error al procesar el inicio de sesión.');
         }
       }
     });

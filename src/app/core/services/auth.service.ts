@@ -1,9 +1,9 @@
 import { Injectable, inject, signal, computed } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, tap, catchError, of } from 'rxjs';
+import { Observable, tap, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { LoginRequest, LoginResponse } from '../models/auth.model';
+import { LoginRequest, LoginResponse, UsuarioAutenticado } from '../models/auth.model';
 
 @Injectable({
   providedIn: 'root'
@@ -15,14 +15,38 @@ export class AuthService {
   private readonly TOKEN_KEY = 'jwt_token';
   private readonly USER_KEY = 'user_info';
 
-  currentUser = signal<LoginResponse['usuario'] | null>(this.getUserFromStorage());
+  currentUser = signal<UsuarioAutenticado | null>(this.getUserFromStorage());
   token = signal<string | null>(sessionStorage.getItem(this.TOKEN_KEY));
 
   isAuthenticated = computed(() => !!this.token());
   userRole = computed(() => this.currentUser()?.rol || null);
 
   login(credentials: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${environment.apiUrl}/auth/login`, credentials).pipe(
+    const payload = {
+      email: credentials.email,
+      password: credentials.password || credentials.password_hash,
+      password_hash: credentials.password_hash || credentials.password
+    };
+
+    return this.http.post<any>(`${environment.apiUrl}/auth/login`, payload).pipe(
+      map((response: any) => {
+        // Backend de Spring Boot retorna: { token, tipo, idUsuario, email, nombres, apellidos, rol, expiresIn }
+        const rolRaw = response.rol || response.usuario?.rol || 'ADMIN';
+        const rolNormalizado: UsuarioAutenticado['rol'] =
+          rolRaw === 'ADMINISTRADOR' ? 'ADMIN' : (rolRaw as UsuarioAutenticado['rol']);
+
+        const loginRes: LoginResponse = {
+          token: response.token,
+          usuario: response.usuario || {
+            id: String(response.idUsuario || response.id || ''),
+            nombre: response.nombres || response.nombre || '',
+            apellido: response.apellidos || response.apellido || '',
+            email: response.email || credentials.email,
+            rol: rolNormalizado
+          }
+        };
+        return loginRes;
+      }),
       tap((response) => {
         sessionStorage.setItem(this.TOKEN_KEY, response.token);
         sessionStorage.setItem(this.USER_KEY, JSON.stringify(response.usuario));
@@ -31,42 +55,6 @@ export class AuthService {
         this.currentUser.set(response.usuario);
 
         this.redirectByRole(response.usuario.rol);
-      }),
-      catchError((error) => {
-        // Fallback resiliente para desarrollo si el backend se encuentra apagado o no responde
-        console.warn('Backend API no disponible, activando sesión demostrativa de desarrollo:', error);
-        const emailLower = (credentials.email || '').toLowerCase();
-        let rol: 'ADMIN' | 'VETERINARIO' | 'RECEPCIONISTA' | 'ENCARGADO_INVENTARIO' = 'ADMIN';
-        let nombre = 'Rommel';
-        let apellido = 'Navarro';
-
-        if (emailLower.includes('vet')) {
-          rol = 'VETERINARIO';
-          nombre = 'Beckhan';
-          apellido = 'Elias';
-        } else if (emailLower.includes('recep')) {
-          rol = 'RECEPCIONISTA';
-          nombre = 'Lucero';
-          apellido = 'Perez';
-        }
-
-        const demoUser: LoginResponse = {
-          token: 'demo-jwt-token-apf2',
-          usuario: {
-            id: 'u0000000-0000-0000-0000-000000000001',
-            nombre,
-            apellido,
-            email: credentials.email || 'admin@clinivet.pe',
-            rol
-          }
-        };
-
-        sessionStorage.setItem(this.TOKEN_KEY, demoUser.token);
-        sessionStorage.setItem(this.USER_KEY, JSON.stringify(demoUser.usuario));
-        this.token.set(demoUser.token);
-        this.currentUser.set(demoUser.usuario);
-        this.redirectByRole(demoUser.usuario.rol);
-        return of(demoUser);
       })
     );
   }
@@ -82,6 +70,7 @@ export class AuthService {
   redirectByRole(rol: string): void {
     switch (rol) {
       case 'ADMIN':
+      case 'ADMINISTRADOR':
       case 'RECEPCIONISTA':
         this.router.navigate(['/dashboard/admin']);
         break;
