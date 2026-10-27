@@ -17,11 +17,13 @@ export class AuthService {
 
   currentUser = signal<UsuarioAutenticado | null>(this.getUserFromStorage());
   token = signal<string | null>(sessionStorage.getItem(this.TOKEN_KEY));
+  sessionExpiredMessage = signal<string | null>(null);
 
   isAuthenticated = computed(() => !!this.token());
   userRole = computed(() => this.currentUser()?.rol || null);
 
   login(credentials: LoginRequest): Observable<LoginResponse> {
+    this.sessionExpiredMessage.set(null);
     const payload = {
       email: credentials.email,
       password: credentials.password || credentials.password_hash,
@@ -60,11 +62,32 @@ export class AuthService {
   }
 
   logout(): void {
+    const currentToken = this.token();
+    if (currentToken) {
+      // Notifica al backend para invalidar en blacklist (RF-04)
+      this.http.post(`${environment.apiUrl}/auth/logout`, {}, {
+        headers: { Authorization: `Bearer ${currentToken}` }
+      }).subscribe({
+        next: () => {},
+        error: () => {}
+      });
+    }
+
     sessionStorage.removeItem(this.TOKEN_KEY);
     sessionStorage.removeItem(this.USER_KEY);
     this.token.set(null);
     this.currentUser.set(null);
+    this.sessionExpiredMessage.set(null);
     this.router.navigate(['/login']);
+  }
+
+  handleSessionExpired(): void {
+    sessionStorage.removeItem(this.TOKEN_KEY);
+    sessionStorage.removeItem(this.USER_KEY);
+    this.token.set(null);
+    this.currentUser.set(null);
+    this.sessionExpiredMessage.set('Tu sesión ha expirado. Por favor, inicia sesión nuevamente.');
+    this.router.navigate(['/login'], { queryParams: { expirado: 'true' } });
   }
 
   redirectByRole(rol: string): void {

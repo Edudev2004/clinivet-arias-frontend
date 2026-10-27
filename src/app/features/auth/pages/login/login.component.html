@@ -80,6 +80,14 @@
       </div>
     </div>
 
+    <!-- Alerta de Sesión Expirada (RF-04) -->
+    <div *ngIf="sessionExpired()" class="p-3 bg-amber-50 border border-amber-200 text-amber-800 rounded-xl text-xs font-semibold flex items-center gap-2.5 animate-in fade-in duration-200">
+      <svg class="h-4 w-4 text-amber-600 flex-shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+      </svg>
+      <span>Tu sesión ha expirado. Por favor, inicia sesión nuevamente.</span>
+    </div>
+
     <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="space-y-4">
       
       <!-- Correo electrónico con ícono y validación -->
