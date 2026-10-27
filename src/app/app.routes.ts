@@ -38,6 +38,12 @@ export const routes: Routes = [
         data: { title: 'Panel de Administración' }
       },
       {
+        path: 'dashboard/recepcionista',
+        canActivate: [roleGuard(['RECEPCIONISTA', 'ADMIN', 'ADMINISTRADOR'])],
+        redirectTo: 'citas',
+        pathMatch: 'full'
+      },
+      {
         path: 'dashboard/veterinario',
         canActivate: [roleGuard(['VETERINARIO'])],
         component: ModulePlaceholderComponent,

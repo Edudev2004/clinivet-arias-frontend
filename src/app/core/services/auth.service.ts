@@ -94,8 +94,10 @@ export class AuthService {
     switch (rol) {
       case 'ADMIN':
       case 'ADMINISTRADOR':
-      case 'RECEPCIONISTA':
         this.router.navigate(['/dashboard/admin']);
+        break;
+      case 'RECEPCIONISTA':
+        this.router.navigate(['/citas']);
         break;
       case 'VETERINARIO':
         this.router.navigate(['/dashboard/veterinario']);

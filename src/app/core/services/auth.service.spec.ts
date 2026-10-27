@@ -104,6 +104,6 @@ describe('AuthService (RF-01, RF-03, RF-04)', () => {
     expect(routerSpy.navigate).toHaveBeenCalledWith(['/dashboard/inventario']);
 
     service.redirectByRole('RECEPCIONISTA');
-    expect(routerSpy.navigate).toHaveBeenCalledWith(['/dashboard/admin']);
+    expect(routerSpy.navigate).toHaveBeenCalledWith(['/citas']);
   });
 });
