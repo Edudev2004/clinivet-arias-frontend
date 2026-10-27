@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 
@@ -41,26 +41,7 @@ interface NavItem {
           <span class="sr-only">Clinivet Arias</span>
         </a>
 
-        <!-- Selector de Perspectiva de Rol (Tabla 40 de APF2) -->
-        <div
-          class="transition-opacity duration-200"
-          [ngClass]="isHovered ? 'opacity-100 px-1' : 'opacity-0 pointer-events-none'"
-        >
-          <label class="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">
-            Perspectiva de Rol
-          </label>
-          <select
-            [value]="activeRole"
-            (change)="cambiarRol($event)"
-            class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs font-semibold text-slate-700 focus:outline-none focus:border-brand-500 shadow-xs"
-          >
-            <option value="ADMIN">Administrador</option>
-            <option value="VETERINARIO">Médico Veterinario</option>
-            <option value="RECEPCIONISTA">Recepcionista</option>
-          </select>
-        </div>
-
-        <!-- Lista de Navegación por Módulos -->
+        <!-- Lista de Navegación por Módulos filtrada reactivamente por rol -->
         <nav class="flex flex-col gap-1.5">
           @for (item of filteredNavItems; track item.path) {
             <a
@@ -128,10 +109,10 @@ interface NavItem {
   `
 })
 export class SidebarComponent {
+  @Input() activeRole: UserRole = 'ADMIN';
   @Output() solicitarLogout = new EventEmitter<void>();
 
   isHovered = false;
-  activeRole: UserRole = 'ADMIN';
 
   private readonly navItems: NavItem[] = [
     {
@@ -168,10 +149,5 @@ export class SidebarComponent {
 
   get filteredNavItems(): NavItem[] {
     return this.navItems.filter((item) => item.roles.includes(this.activeRole));
-  }
-
-  cambiarRol(event: Event): void {
-    const select = event.target as HTMLSelectElement;
-    this.activeRole = select.value as UserRole;
   }
 }

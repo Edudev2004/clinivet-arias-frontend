@@ -21,7 +21,7 @@ import { AuthService } from '../../../core/services/auth.service';
   template: `
     <div class="min-h-screen bg-[#f8fafc] text-slate-800 flex flex-col md:flex-row">
       <!-- Barra lateral de navegación (Desktop hover expansible) -->
-      <app-sidebar (solicitarLogout)="mostrarModalLogout = true"></app-sidebar>
+      <app-sidebar [activeRole]="userRole" (solicitarLogout)="mostrarModalLogout = true"></app-sidebar>
 
       <!-- Área de contenido principal -->
       <div class="flex-1 flex flex-col pl-0 md:pl-20 transition-all duration-300 min-w-0 pb-20 md:pb-8">
