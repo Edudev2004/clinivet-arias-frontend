@@ -97,7 +97,7 @@ export class AuthService {
         this.router.navigate(['/dashboard/admin']);
         break;
       case 'RECEPCIONISTA':
-        this.router.navigate(['/citas']);
+        this.router.navigate(['/dashboard/recepcionista']);
         break;
       case 'VETERINARIO':
         this.router.navigate(['/dashboard/veterinario']);

@@ -40,8 +40,8 @@ export const routes: Routes = [
       {
         path: 'dashboard/recepcionista',
         canActivate: [roleGuard(['RECEPCIONISTA', 'ADMIN', 'ADMINISTRADOR'])],
-        redirectTo: 'citas',
-        pathMatch: 'full'
+        component: ModulePlaceholderComponent,
+        data: { title: 'Panel de Recepción' }
       },
       {
         path: 'dashboard/veterinario',
