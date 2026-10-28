@@ -71,8 +71,10 @@ export const routes: Routes = [
       {
         path: 'citas',
         canActivate: [roleGuard(['ADMIN', 'ADMINISTRADOR', 'RECEPCIONISTA', 'VETERINARIO'])],
-        component: ModulePlaceholderComponent,
-        data: { title: 'Agenda de Citas' }
+        loadComponent: () =>
+          import('./features/citas/pages/citas-page/citas-page.component').then(
+            (m) => m.CitasPageComponent
+          )
       },
       {
         path: 'inventario',
