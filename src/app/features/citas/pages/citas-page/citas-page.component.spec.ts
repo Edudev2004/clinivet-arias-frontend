@@ -5,7 +5,7 @@ import { CitasPageComponent } from './citas-page.component';
 import { CitaService } from '../../services/cita.service';
 import { Cita } from '../../models/cita.model';
 
-describe('CitasPageComponent (RF-13, RF-18)', () => {
+describe('CitasPageComponent (RF-13, RF-16, RF-17, RF-18, RF-19)', () => {
   let component: CitasPageComponent;
   let fixture: ComponentFixture<CitasPageComponent>;
   let citaService: jasmine.SpyObj<CitaService>;
@@ -28,7 +28,14 @@ describe('CitasPageComponent (RF-13, RF-18)', () => {
   };
 
   beforeEach(async () => {
-    const citaSpy = jasmine.createSpyObj('CitaService', ['listarCitas', 'listarVeterinarios'], {
+    const citaSpy = jasmine.createSpyObj('CitaService', [
+      'listarCitas',
+      'listarVeterinarios',
+      'consultarDisponibilidad',
+      'reprogramarCita',
+      'cancelarCita',
+      'actualizarEstadoCita'
+    ], {
       citas: jasmine.createSpy('citas').and.returnValue([mockCita]),
       totalElementos: jasmine.createSpy('totalElementos').and.returnValue(1),
       cargando: jasmine.createSpy('cargando').and.returnValue(false),
@@ -80,5 +87,15 @@ describe('CitasPageComponent (RF-13, RF-18)', () => {
     expect(component.mensajeExito()).toContain('Bobby');
     expect(component.mensajeExito()).toContain('Dr. Beckhan Elias');
     expect(citaService.listarCitas).toHaveBeenCalled();
+  });
+
+  it('debe abrir modal de detalle al seleccionar una cita (RF-16, RF-17, RF-19)', () => {
+    component.verDetalleCita(mockCita);
+    expect(component.citaSeleccionada()).toEqual(mockCita);
+
+    const citaActualizada = { ...mockCita, estado: 'ATENDIDA' as const };
+    component.onCitaActualizada(citaActualizada);
+    expect(component.citaSeleccionada()).toBeNull();
+    expect(component.mensajeExito()).toContain('actualizada exitosamente');
   });
 });
