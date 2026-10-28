@@ -1,17 +1,19 @@
-import { Component, OnInit, inject, signal, computed } from '@angular/core';
+﻿import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CitaService } from '../../services/cita.service';
 import { Cita, EstadoCita, CitaFiltros } from '../../models/cita.model';
 import { CitaFormComponent } from '../../components/cita-form/cita-form.component';
 import { CitaDetailModalComponent } from '../../components/cita-detail-modal/cita-detail-modal.component';
+import { ConsultaFormModalComponent } from '../../../consultas/components/consulta-form-modal/consulta-form-modal.component';
+import { Consulta } from '../../../consultas/models/consulta.model';
 
 export type ModoVistaCitas = 'tabla' | 'calendario';
 
 @Component({
   selector: 'app-citas-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, CitaFormComponent, CitaDetailModalComponent],
+  imports: [CommonModule, FormsModule, CitaFormComponent, CitaDetailModalComponent, ConsultaFormModalComponent],
   template: `
     <div class="flex flex-col gap-6">
       <!-- Encabezado del Módulo de Citas (RF-13 a RF-19 / APF2 Tabla 38 Anexo C) -->
@@ -382,6 +384,7 @@ export class CitasPageComponent implements OnInit {
   readonly modoVista = signal<ModoVistaCitas>('tabla');
   readonly mostrarFormulario = signal<boolean>(false);
   readonly citaSeleccionada = signal<Cita | null>(null);
+  readonly citaParaConsulta = signal<Cita | null>(null);
   readonly mensajeExito = signal<string | null>(null);
 
   // Modelos de filtros dinámicos
