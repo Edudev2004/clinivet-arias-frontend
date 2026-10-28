@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output, inject, signal } from '@angular/core';
+﻿import { Component, EventEmitter, Input, Output, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { CitaService } from '../../services/cita.service';
@@ -400,6 +400,10 @@ export class CitaDetailModalComponent {
         this.mensajeError.set(msg);
       }
     });
+  }
+
+  onIniciarConsulta(): void {
+    this.iniciarConsulta.emit(this.cita);
   }
 
   onMarcarAtendida(): void {
