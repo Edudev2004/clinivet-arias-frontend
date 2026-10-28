@@ -61,6 +61,14 @@ export const routes: Routes = [
         component: MascotasPageComponent
       },
       {
+        path: 'propietarios',
+        canActivate: [roleGuard(['ADMIN', 'ADMINISTRADOR', 'RECEPCIONISTA', 'VETERINARIO'])],
+        loadComponent: () =>
+          import('./features/propietarios/pages/propietarios-page/propietarios-page.component').then(
+            (m) => m.PropietariosPageComponent
+          )
+      },
+      {
         path: 'citas',
         canActivate: [roleGuard(['ADMIN', 'ADMINISTRADOR', 'RECEPCIONISTA', 'VETERINARIO'])],
         component: ModulePlaceholderComponent,
