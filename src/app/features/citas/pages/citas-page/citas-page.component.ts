@@ -4,21 +4,22 @@ import { FormsModule } from '@angular/forms';
 import { CitaService } from '../../services/cita.service';
 import { Cita, EstadoCita } from '../../models/cita.model';
 import { CitaFormComponent } from '../../components/cita-form/cita-form.component';
+import { CitaDetailModalComponent } from '../../components/cita-detail-modal/cita-detail-modal.component';
 
 @Component({
   selector: 'app-citas-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, CitaFormComponent],
+  imports: [CommonModule, FormsModule, CitaFormComponent, CitaDetailModalComponent],
   template: `
     <div class="flex flex-col gap-6">
-      <!-- Encabezado del Módulo de Citas (RF-13 a RF-18) -->
+      <!-- Encabezado del Módulo de Citas (RF-13 a RF-19) -->
       <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 font-outfit tracking-tight">
             Agenda de Citas Médicas
           </h1>
           <p class="text-xs sm:text-sm text-slate-500 font-medium">
-            Programación de consultas, control de disponibilidad y turnos de especialistas (RF-13, RF-14, RF-15, RF-18)
+            Programación de consultas, control de disponibilidad y turnos de especialistas (RF-13, RF-14, RF-15, RF-16, RF-17, RF-18, RF-19)
           </p>
         </div>
 
@@ -76,6 +77,15 @@ import { CitaFormComponent } from '../../components/cita-form/cita-form.componen
           (guardado)="onCitaGuardada($event)"
           (cancelar)="cerrarFormulario()"
         ></app-cita-form>
+      }
+
+      <!-- Modal de Detalle y Acciones de Cita (RF-16, RF-17, RF-19) -->
+      @if (citaSeleccionada()) {
+        <app-cita-detail-modal
+          [cita]="citaSeleccionada()!"
+          (cerrar)="citaSeleccionada.set(null)"
+          (citaActualizada)="onCitaActualizada($event)"
+        ></app-cita-detail-modal>
       }
 
       <!-- Listado de Citas y Filtro por Estado (RF-18) -->
@@ -153,11 +163,15 @@ import { CitaFormComponent } from '../../components/cita-form/cita-form.componen
                   <th class="py-3 px-4">Veterinario Especialista</th>
                   <th class="py-3 px-4">Motivo</th>
                   <th class="py-3 px-4">Estado</th>
+                  <th class="py-3 px-4 text-right">Acción</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-slate-50 text-xs font-medium text-slate-700">
                 @for (cita of citaService.citas(); track cita.id) {
-                  <tr class="hover:bg-slate-50/70 transition-colors">
+                  <tr
+                    (click)="verDetalleCita(cita)"
+                    class="hover:bg-slate-50/70 transition-colors cursor-pointer group"
+                  >
                     <td class="py-3.5 px-4 whitespace-nowrap">
                       <div class="font-bold text-slate-900">{{ cita.fecha }}</div>
                       <div class="text-[11px] text-slate-400 font-semibold flex items-center gap-1">
@@ -168,7 +182,7 @@ import { CitaFormComponent } from '../../components/cita-form/cita-form.componen
                       </div>
                     </td>
                     <td class="py-3.5 px-4">
-                      <div class="font-bold text-slate-900">{{ cita.nombreMascota }}</div>
+                      <div class="font-bold text-slate-900 group-hover:text-[#1e6ff9] transition-colors">{{ cita.nombreMascota }}</div>
                       <div class="text-[11px] text-slate-400">{{ cita.especieMascota }}</div>
                     </td>
                     <td class="py-3.5 px-4">
@@ -202,6 +216,15 @@ import { CitaFormComponent } from '../../components/cita-form/cita-form.componen
                         {{ cita.estado }}
                       </span>
                     </td>
+                    <td class="py-3.5 px-4 text-right whitespace-nowrap">
+                      <button
+                        type="button"
+                        (click)="verDetalleCita(cita, $event)"
+                        class="px-3 py-1.5 rounded-xl border border-slate-200 bg-white font-bold text-xs text-slate-700 hover:bg-slate-50 group-hover:border-sky-300 transition-all shadow-2xs"
+                      >
+                        Gestionar
+                      </button>
+                    </td>
                   </tr>
                 }
               </tbody>
@@ -216,6 +239,7 @@ export class CitasPageComponent implements OnInit {
   readonly citaService = inject(CitaService);
 
   readonly mostrarFormulario = signal<boolean>(false);
+  readonly citaSeleccionada = signal<Cita | null>(null);
   readonly filtroEstado = signal<EstadoCita | undefined>(undefined);
   readonly mensajeExito = signal<string | null>(null);
 
@@ -241,10 +265,25 @@ export class CitasPageComponent implements OnInit {
     this.mostrarFormulario.set(false);
   }
 
+  verDetalleCita(cita: Cita, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.citaSeleccionada.set(cita);
+  }
+
   onCitaGuardada(cita: Cita): void {
     this.mostrarFormulario.set(false);
     this.mensajeExito.set(
       `Cita médica agendada exitosamente para "${cita.nombreMascota}" con el ${cita.nombreVeterinario} el día ${cita.fecha} a las ${cita.hora} hrs (RF-13).`
+    );
+    this.cargarCitas();
+  }
+
+  onCitaActualizada(cita: Cita): void {
+    this.citaSeleccionada.set(null);
+    this.mensajeExito.set(
+      `Cita de "${cita.nombreMascota}" actualizada exitosamente. Estado actual: ${cita.estado}.`
     );
     this.cargarCitas();
   }

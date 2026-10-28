@@ -5,6 +5,8 @@ import { environment } from '../../../../environments/environment';
 import {
   Cita,
   CitaCreateRequest,
+  CitaReprogramarRequest,
+  CitaEstadoRequest,
   CitaPage,
   CitaFiltros,
   DisponibilidadResponse,
@@ -237,6 +239,131 @@ export class CitaService {
         throw err;
       })
     );
+  }
+
+  /**
+   * Reprograma una cita médica en estado PROGRAMADA a nueva fecha y hora (RF-16).
+   * Endpoint Spring Boot: PATCH /api/citas/{id}/reprogramar
+   */
+  reprogramarCita(id: string, payload: CitaReprogramarRequest): Observable<Cita> {
+    this.cargando.set(true);
+    this.error.set(null);
+
+    return this.http.patch<Cita>(`${this.baseUrl}/${id}/reprogramar`, payload).pipe(
+      tap((citaReprogramada) => {
+        this.actualizarCacheCita(citaReprogramada);
+        this.cargando.set(false);
+      }),
+      catchError((err) => {
+        if (err.status === 0 || !err.status) {
+          const index = this.citasCache.findIndex((c) => c.id === id);
+          if (index !== -1) {
+            const actual = this.citasCache[index];
+            const actualizada: Cita = {
+              ...actual,
+              fecha: payload.fecha,
+              hora: payload.hora,
+              fechaHora: `${payload.fecha}T${payload.hora}:00`,
+              motivo: payload.motivo ? payload.motivo.trim() : actual.motivo
+            };
+            this.actualizarCacheCita(actualizada);
+            this.cargando.set(false);
+            return of(actualizada);
+          }
+        }
+        this.cargando.set(false);
+        throw err;
+      })
+    );
+  }
+
+  /**
+   * Cancela una cita médica conservando el registro histórico (RF-17 / RN-07).
+   * Endpoint Spring Boot: PATCH /api/citas/{id}/cancelar
+   */
+  cancelarCita(id: string): Observable<Cita> {
+    this.cargando.set(true);
+    this.error.set(null);
+
+    return this.http.patch<Cita>(`${this.baseUrl}/${id}/cancelar`, {}).pipe(
+      tap((citaCancelada) => {
+        this.actualizarCacheCita(citaCancelada);
+        this.cargando.set(false);
+      }),
+      catchError((err) => {
+        if (err.status === 0 || !err.status) {
+          const index = this.citasCache.findIndex((c) => c.id === id);
+          if (index !== -1) {
+            const cancelada: Cita = {
+              ...this.citasCache[index],
+              estado: 'CANCELADA'
+            };
+            this.actualizarCacheCita(cancelada);
+            this.cargando.set(false);
+            return of(cancelada);
+          }
+        }
+        this.cargando.set(false);
+        throw err;
+      })
+    );
+  }
+
+  /**
+   * Actualiza el estado de una cita médica de PROGRAMADA a ATENDIDA o CANCELADA (RF-19).
+   * Endpoint Spring Boot: PATCH /api/citas/{id}/estado
+   */
+  actualizarEstadoCita(id: string, payload: CitaEstadoRequest): Observable<Cita> {
+    this.cargando.set(true);
+    this.error.set(null);
+
+    return this.http.patch<Cita>(`${this.baseUrl}/${id}/estado`, payload).pipe(
+      tap((citaActualizada) => {
+        this.actualizarCacheCita(citaActualizada);
+        this.cargando.set(false);
+      }),
+      catchError((err) => {
+        if (err.status === 0 || !err.status) {
+          const index = this.citasCache.findIndex((c) => c.id === id);
+          if (index !== -1) {
+            const actualizada: Cita = {
+              ...this.citasCache[index],
+              estado: payload.estado
+            };
+            this.actualizarCacheCita(actualizada);
+            this.cargando.set(false);
+            return of(actualizada);
+          }
+        }
+        this.cargando.set(false);
+        throw err;
+      })
+    );
+  }
+
+  /**
+   * Obtiene el detalle de una cita específica por su ID.
+   * Endpoint Spring Boot: GET /api/citas/{id}
+   */
+  obtenerCitaPorId(id: string): Observable<Cita> {
+    return this.http.get<Cita>(`${this.baseUrl}/${id}`).pipe(
+      catchError(() => {
+        const encontrada = this.citasCache.find((c) => c.id === id);
+        if (encontrada) {
+          return of(encontrada);
+        }
+        throw new Error('Cita no encontrada');
+      })
+    );
+  }
+
+  private actualizarCacheCita(cita: Cita): void {
+    const index = this.citasCache.findIndex((c) => c.id === cita.id);
+    if (index !== -1) {
+      this.citasCache[index] = cita;
+      this.guardarCacheLocal();
+    }
+    this.citas.update((lista) => lista.map((c) => (c.id === cita.id ? cita : c)));
   }
 
   /**
