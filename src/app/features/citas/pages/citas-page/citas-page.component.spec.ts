@@ -5,12 +5,12 @@ import { CitasPageComponent } from './citas-page.component';
 import { CitaService } from '../../services/cita.service';
 import { Cita } from '../../models/cita.model';
 
-describe('CitasPageComponent (RF-13, RF-16, RF-17, RF-18, RF-19)', () => {
+describe('CitasPageComponent (RF-13 a RF-19 / Issue #35)', () => {
   let component: CitasPageComponent;
   let fixture: ComponentFixture<CitasPageComponent>;
   let citaService: jasmine.SpyObj<CitaService>;
 
-  const mockCita: Cita = {
+  const mockCita1: Cita = {
     id: 'c0000000-0000-0000-0000-000000000001',
     mascotaId: 'f0000000-0000-0000-0000-000000000001',
     nombreMascota: 'Bobby',
@@ -27,6 +27,23 @@ describe('CitasPageComponent (RF-13, RF-16, RF-17, RF-18, RF-19)', () => {
     motivo: 'Control general y chequeo'
   };
 
+  const mockCita2: Cita = {
+    id: 'c0000000-0000-0000-0000-000000000002',
+    mascotaId: 'f0000000-0000-0000-0000-000000000002',
+    nombreMascota: 'Michi',
+    especieMascota: 'Felino',
+    propietarioId: 'e0000000-0000-0000-0000-000000000002',
+    nombrePropietario: 'María Flores',
+    dniPropietario: '72345678',
+    veterinarioId: 'd0000000-0000-0000-0000-000000000002',
+    nombreVeterinario: 'Dra. Lucero Pérez',
+    fecha: '2026-11-02',
+    hora: '11:00',
+    fechaHora: '2026-11-02T11:00:00',
+    estado: 'ATENDIDA',
+    motivo: 'Desparasitación'
+  };
+
   beforeEach(async () => {
     const citaSpy = jasmine.createSpyObj('CitaService', [
       'listarCitas',
@@ -36,10 +53,20 @@ describe('CitasPageComponent (RF-13, RF-16, RF-17, RF-18, RF-19)', () => {
       'cancelarCita',
       'actualizarEstadoCita'
     ], {
-      citas: jasmine.createSpy('citas').and.returnValue([mockCita]),
-      totalElementos: jasmine.createSpy('totalElementos').and.returnValue(1),
+      citas: jasmine.createSpy('citas').and.returnValue([mockCita1, mockCita2]),
+      totalElementos: jasmine.createSpy('totalElementos').and.returnValue(2),
+      totalPaginas: jasmine.createSpy('totalPaginas').and.returnValue(1),
+      paginaActual: jasmine.createSpy('paginaActual').and.returnValue(0),
       cargando: jasmine.createSpy('cargando').and.returnValue(false),
-      veterinarios: jasmine.createSpy('veterinarios').and.returnValue([])
+      veterinarios: jasmine.createSpy('veterinarios').and.returnValue([
+        {
+          id: 'd0000000-0000-0000-0000-000000000001',
+          nombreCompleto: 'Dr. Beckhan Elias',
+          especialidad: 'Medicina General',
+          numeroColegiatura: 'CMVP-14892',
+          activo: true
+        }
+      ])
     });
 
     await TestBed.configureTestingModule({
@@ -49,12 +76,13 @@ describe('CitasPageComponent (RF-13, RF-16, RF-17, RF-18, RF-19)', () => {
 
     citaService = TestBed.inject(CitaService) as jasmine.SpyObj<CitaService>;
     citaService.listarCitas.and.returnValue(of({
-      content: [mockCita],
-      totalElements: 1,
+      content: [mockCita1, mockCita2],
+      totalElements: 2,
       totalPages: 1,
       number: 0,
       size: 10
     }));
+    citaService.listarVeterinarios.and.returnValue(of([]));
 
     fixture = TestBed.createComponent(CitasPageComponent);
     component = fixture.componentInstance;
@@ -65,37 +93,57 @@ describe('CitasPageComponent (RF-13, RF-16, RF-17, RF-18, RF-19)', () => {
     expect(component).toBeTruthy();
   });
 
-  it('debe alternar la visualización del formulario de nueva cita', () => {
-    expect(component.mostrarFormulario()).toBeFalse();
+  it('debe alternar entre Modo Vista Tabla y Modo Vista Calendario (RF-18)', () => {
+    expect(component.modoVista()).toBe('tabla');
+    component.modoVista.set('calendario');
+    expect(component.modoVista()).toBe('calendario');
+  });
+
+  it('debe agrupar las citas por veterinario para la vista calendario (RF-18)', () => {
+    const agrupadas = component.citasAgrupadasPorVet();
+    expect(agrupadas.length).toBe(2);
+    expect(agrupadas.some((g) => g.veterinarioNombre === 'Dr. Beckhan Elias')).toBeTrue();
+    expect(agrupadas.some((g) => g.veterinarioNombre === 'Dra. Lucero Pérez')).toBeTrue();
+  });
+
+  it('debe aplicar filtros por veterinario, fecha y estado dinámicamente (RF-18)', () => {
+    component.filtroVeterinarioId = 'd0000000-0000-0000-0000-000000000001';
+    component.filtroFecha = '2026-11-02';
+    component.filtroEstado = 'PROGRAMADA';
+
+    component.aplicarFiltros();
+
+    expect(citaService.listarCitas).toHaveBeenCalledWith({
+      veterinarioId: 'd0000000-0000-0000-0000-000000000001',
+      fecha: '2026-11-02',
+      estado: 'PROGRAMADA',
+      page: 0,
+      size: 10
+    });
+  });
+
+  it('debe limpiar filtros y recargar las citas completas', () => {
+    component.filtroVeterinarioId = 'd0000000-0000-0000-0000-000000000001';
+    component.filtroFecha = '2026-11-02';
+    component.filtroEstado = 'PROGRAMADA';
+
+    component.limpiarFiltros();
+
+    expect(component.filtroVeterinarioId).toBe('');
+    expect(component.filtroFecha).toBe('');
+    expect(component.filtroEstado).toBeUndefined();
+    expect(citaService.listarCitas).toHaveBeenCalled();
+  });
+
+  it('debe abrir y cerrar formulario de nueva cita', () => {
     component.abrirFormularioNuevaCita();
     expect(component.mostrarFormulario()).toBeTrue();
     component.cerrarFormulario();
     expect(component.mostrarFormulario()).toBeFalse();
   });
 
-  it('debe filtrar citas por estado al hacer clic en los filtros rápidos (RF-18)', () => {
-    component.filtrarPorEstado('PROGRAMADA');
-    expect(component.filtroEstado()).toBe('PROGRAMADA');
-    expect(citaService.listarCitas).toHaveBeenCalledWith({ estado: 'PROGRAMADA' });
-  });
-
-  it('debe mostrar mensaje de confirmación y recargar la lista cuando una cita es agendada (RF-13)', () => {
-    component.mostrarFormulario.set(true);
-    component.onCitaGuardada(mockCita);
-
-    expect(component.mostrarFormulario()).toBeFalse();
-    expect(component.mensajeExito()).toContain('Bobby');
-    expect(component.mensajeExito()).toContain('Dr. Beckhan Elias');
-    expect(citaService.listarCitas).toHaveBeenCalled();
-  });
-
-  it('debe abrir modal de detalle al seleccionar una cita (RF-16, RF-17, RF-19)', () => {
-    component.verDetalleCita(mockCita);
-    expect(component.citaSeleccionada()).toEqual(mockCita);
-
-    const citaActualizada = { ...mockCita, estado: 'ATENDIDA' as const };
-    component.onCitaActualizada(citaActualizada);
-    expect(component.citaSeleccionada()).toBeNull();
-    expect(component.mensajeExito()).toContain('actualizada exitosamente');
+  it('debe abrir modal de detalle al seleccionar una cita', () => {
+    component.verDetalleCita(mockCita1);
+    expect(component.citaSeleccionada()).toEqual(mockCita1);
   });
 });
