@@ -1,8 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { PetDetailModalComponent } from './pet-detail-modal.component';
 import { Mascota } from '../../models/mascota.model';
 
-describe('PetDetailModalComponent', () => {
+describe('PetDetailModalComponent (RF-10 / RF-24)', () => {
   let component: PetDetailModalComponent;
   let fixture: ComponentFixture<PetDetailModalComponent>;
 
@@ -23,7 +24,7 @@ describe('PetDetailModalComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [PetDetailModalComponent]
+      imports: [PetDetailModalComponent, HttpClientTestingModule]
     }).compileComponents();
 
     fixture = TestBed.createComponent(PetDetailModalComponent);
@@ -40,6 +41,13 @@ describe('PetDetailModalComponent', () => {
     expect(compiled.textContent).toContain('Dorado');
     expect(compiled.textContent).toContain('Carlos Mendoza');
     expect(compiled.textContent).toContain('45892314');
+  });
+
+  it('debe alternar entre pestaña general y pestaña de vacunas (RF-24)', () => {
+    expect(component.tabActiva).toBe('general');
+    component.tabActiva = 'vacunas';
+    fixture.detectChanges();
+    expect(component.tabActiva).toBe('vacunas');
   });
 
   it('debe calcular iniciales del propietario correctamente', () => {
